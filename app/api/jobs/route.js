@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/session";
 
-// Pulls "web developer" job listings from two legitimate, ToS-compliant sources:
-//  1) Adzuna (https://developer.adzuna.com) - free API key required, aggregates many job boards
-//  2) RemoteOK (https://remoteok.com/api) - public, no key required, remote jobs only
+// Pulls "web developer" job listings from legitimate, ToS-compliant sources:
+//  1) Jooble (https://jooble.org/api/about) - free API key, covers 69+ countries
+//     including Pakistan - this is the main source for Pakistan-based searches.
+//  2) Adzuna (https://developer.adzuna.com) - free API key, but only covers a
+//     fixed list of countries (US, UK, India, etc.) - Pakistan is NOT included.
+//  3) RemoteOK (https://remoteok.com/api) - public, no key required, remote jobs only.
 // This gives the user a live feed to browse; they apply manually via the links,
 // which respects each platform's terms of service.
 export async function GET(request) {
@@ -15,6 +18,35 @@ export async function GET(request) {
   const location = searchParams.get("location") || "";
 
   const jobs = [];
+
+  // --- Jooble (covers Pakistan and 68 other countries) ---
+  try {
+    if (process.env.JOOBLE_API_KEY) {
+      const res = await fetch(`https://jooble.org/api/${process.env.JOOBLE_API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          keywords: query,
+          location: location || "Pakistan",
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        for (const j of data.jobs || []) {
+          jobs.push({
+            source: "Jooble",
+            title: j.title,
+            company: j.company || "Unknown",
+            location: j.location || "",
+            url: j.link,
+            posted: j.updated,
+          });
+        }
+      }
+    }
+  } catch (e) {
+    console.error("Jooble fetch failed", e);
+  }
 
   // --- Adzuna ---
   try {

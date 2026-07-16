@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 export default function JobsClient() {
   const [jobs, setJobs] = useState([]);
   const [query, setQuery] = useState("web developer");
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState("Pakistan");
   const [loading, setLoading] = useState(true);
   const [savedMsg, setSavedMsg] = useState("");
 
