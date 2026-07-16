@@ -1,0 +1,51 @@
+// Prisma schema for LinkedIn Career Assistant
+// Default datasource is SQLite for easy local development.
+// For production (Vercel etc.) switch provider to "postgresql" and set DATABASE_URL
+// to a hosted Postgres instance (Vercel Postgres, Neon, Supabase all have free tiers).
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  linkedinSub   String   @unique // LinkedIn's unique person id (from OIDC "sub")
+  name          String?
+  email         String?
+  accessToken   String   // LinkedIn OAuth access token (encrypt at rest in real production use)
+  tokenExpires  DateTime
+  createdAt     DateTime @default(now())
+
+  posts         Post[]
+  applications  Application[]
+}
+
+model Post {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  content       String
+  scheduledFor  DateTime // when it should be published
+  status        String   @default("pending") // pending | posted | failed
+  errorMessage  String?
+  postedAt      DateTime?
+  createdAt     DateTime @default(now())
+}
+
+model Application {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  jobTitle      String
+  company       String
+  jobUrl        String?
+  status        String   @default("saved") // saved | applied | interview | offer | rejected
+  notes         String?
+  appliedDate   DateTime?
+  createdAt     DateTime @default(now())
+}
