@@ -1,10 +1,10 @@
 // Prisma schema for LinkedIn Career Assistant
-// Default datasource is SQLite for easy local development.
-// For production (Vercel etc.) switch provider to "postgresql" and set DATABASE_URL
-// to a hosted Postgres instance (Vercel Postgres, Neon, Supabase all have free tiers).
+// Using PostgreSQL (required for serverless hosting like Vercel - SQLite files
+// don't persist on serverless infrastructure). Get a free Postgres database from
+// neon.tech, Vercel Postgres, or Supabase, and set DATABASE_URL accordingly.
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
