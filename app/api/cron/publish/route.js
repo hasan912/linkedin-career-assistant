@@ -30,6 +30,7 @@ export async function GET(request) {
         accessToken: post.user.accessToken,
         authorSub: post.user.linkedinSub,
         text: post.content,
+        imageUrn: post.imageUrn || undefined,
       });
       await prisma.post.update({
         where: { id: post.id },

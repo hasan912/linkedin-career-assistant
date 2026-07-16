@@ -17,7 +17,7 @@ export async function POST(request) {
   const userId = await getSessionUserId();
   if (!userId) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const { content, scheduledFor } = await request.json();
+  const { content, scheduledFor, imageUrn } = await request.json();
   if (!content || !scheduledFor) {
     return NextResponse.json({ error: "content and scheduledFor are required" }, { status: 400 });
   }
@@ -26,6 +26,7 @@ export async function POST(request) {
     data: {
       userId,
       content,
+      imageUrn: imageUrn || null,
       scheduledFor: new Date(scheduledFor),
     },
   });

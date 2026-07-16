@@ -30,6 +30,7 @@ model Post {
   userId        String
   user          User     @relation(fields: [userId], references: [id])
   content       String
+  imageUrn      String?  // LinkedIn image URN (from the Images API), set if a photo is attached
   scheduledFor  DateTime // when it should be published
   status        String   @default("pending") // pending | posted | failed
   errorMessage  String?
