@@ -52,6 +52,28 @@ export default function ApplicationsClient() {
     load();
   }
 
+  function exportCsv() {
+    const headers = ["Job Title", "Company", "Status", "Job URL", "Notes", "Applied Date", "Saved On"];
+    const escape = (val) => `"${String(val ?? "").replace(/"/g, '""')}"`;
+    const rows = apps.map((a) => [
+      a.jobTitle,
+      a.company,
+      a.status,
+      a.jobUrl || "",
+      a.notes || "",
+      a.appliedDate ? new Date(a.appliedDate).toLocaleDateString() : "",
+      new Date(a.createdAt).toLocaleDateString(),
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map(escape).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `applications-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <>
       <div className="card">
@@ -77,7 +99,14 @@ export default function ApplicationsClient() {
         </form>
       </div>
 
-      <div className="card-title" style={{ marginTop: 32 }}>Your pipeline</div>
+      <div className="row" style={{ marginTop: 32 }}>
+        <div className="card-title" style={{ marginBottom: 0 }}>Your pipeline</div>
+        {apps.length > 0 && (
+          <button className="btn btn-ghost" onClick={exportCsv}>
+            ⬇ Export to CSV
+          </button>
+        )}
+      </div>
       {apps.length === 0 && <div className="empty">Nothing tracked yet — save a job lead or add one manually.</div>}
       {apps.map((a) => (
         <div className="card" key={a.id}>

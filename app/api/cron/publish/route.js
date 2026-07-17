@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { publishLinkedInPost } from "@/lib/linkedin";
+import { nextOccurrence } from "@/lib/timezone";
 
 // This endpoint is meant to be triggered by a scheduled job (see vercel.json),
 // e.g. every 15 minutes. It finds posts that are due and publishes them.
@@ -36,6 +37,22 @@ export async function GET(request) {
         where: { id: post.id },
         data: { status: "posted", postedAt: new Date() },
       });
+
+      // Recurring posts: schedule the next occurrence as a fresh pending post.
+      if (post.repeat === "daily" || post.repeat === "weekly") {
+        const nextTime = nextOccurrence(post.scheduledFor, post.timeZone, post.repeat);
+        await prisma.post.create({
+          data: {
+            userId: post.userId,
+            content: post.content,
+            imageUrn: post.imageUrn,
+            scheduledFor: nextTime,
+            timeZone: post.timeZone,
+            repeat: post.repeat,
+          },
+        });
+      }
+
       results.push({ id: post.id, status: "posted" });
     } catch (err) {
       await prisma.post.update({

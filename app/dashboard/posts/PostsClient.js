@@ -19,6 +19,7 @@ export default function PostsClient() {
   const [minute, setMinute] = useState(0);
   const [ampm, setAmpm] = useState("AM");
   const [timeZone, setTimeZone] = useState(detectBrowserTimezone());
+  const [repeat, setRepeat] = useState("none");
 
   const [imageFile, setImageFile] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
@@ -26,6 +27,13 @@ export default function PostsClient() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const fileInputRef = useRef(null);
+
+  // AI post generator state
+  const [aiTopic, setAiTopic] = useState("");
+  const [aiTone, setAiTone] = useState("Professional");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState("");
+  const [showAiPanel, setShowAiPanel] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -38,6 +46,28 @@ export default function PostsClient() {
   useEffect(() => {
     load();
   }, []);
+
+  async function handleGenerateWithAi() {
+    setAiError("");
+    if (!aiTopic.trim()) {
+      setAiError("Enter a topic first.");
+      return;
+    }
+    setAiLoading(true);
+    const res = await fetch("/api/ai/generate-post", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ topic: aiTopic, tone: aiTone }),
+    });
+    setAiLoading(false);
+    if (res.ok) {
+      const data = await res.json();
+      setContent(data.post);
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setAiError(data.error || "Couldn't generate a post. Try again.");
+    }
+  }
 
   async function handleImageSelect(e) {
     const file = e.target.files?.[0];
@@ -84,8 +114,6 @@ export default function PostsClient() {
       return;
     }
 
-    // Convert the 12-hour picker into 24-hour, then convert the chosen
-    // timezone's wall-clock time into a correct UTC instant.
     let hour24 = hour12 % 12;
     if (ampm === "PM") hour24 += 12;
     const scheduledForUtc = zonedTimeToUtc(dateStr, hour24, minute, timeZone).toISOString();
@@ -94,12 +122,19 @@ export default function PostsClient() {
     const res = await fetch("/api/posts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content, scheduledFor: scheduledForUtc, imageUrn }),
+      body: JSON.stringify({
+        content,
+        scheduledFor: scheduledForUtc,
+        imageUrn,
+        repeat,
+        timeZone,
+      }),
     });
     setLoading(false);
     if (res.ok) {
       setContent("");
       removeImage();
+      setRepeat("none");
       load();
     } else {
       setError("Couldn't schedule that post. Try again.");
@@ -116,6 +151,56 @@ export default function PostsClient() {
       <div className="card">
         <div className="card-title">Schedule a new post</div>
         <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: 16 }}>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => setShowAiPanel((s) => !s)}
+            >
+              ✨ {showAiPanel ? "Hide" : "Generate with AI"}
+            </button>
+          </div>
+
+          {showAiPanel && (
+            <div
+              style={{
+                border: "1px solid var(--border)",
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 20,
+                background: "var(--ink)",
+              }}
+            >
+              <div className="field">
+                <label>Topic</label>
+                <input
+                  value={aiTopic}
+                  onChange={(e) => setAiTopic(e.target.value)}
+                  placeholder="e.g. why I switched from Python to Next.js"
+                />
+              </div>
+              <div className="row" style={{ gap: 12, alignItems: "flex-end" }}>
+                <div className="field" style={{ flex: 1, marginBottom: 0 }}>
+                  <label>Tone</label>
+                  <select value={aiTone} onChange={(e) => setAiTone(e.target.value)}>
+                    <option value="Professional">Professional</option>
+                    <option value="Casual">Casual</option>
+                    <option value="Storytelling">Storytelling</option>
+                    <option value="Technical">Technical</option>
+                  </select>
+                </div>
+                <button type="button" className="btn" onClick={handleGenerateWithAi} disabled={aiLoading}>
+                  {aiLoading ? "Writing…" : "Generate"}
+                </button>
+              </div>
+              {aiError && (
+                <p style={{ color: "var(--danger)", fontSize: 13, marginTop: 10, marginBottom: 0 }}>
+                  {aiError}
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="field">
             <label>Post content</label>
             <textarea
@@ -203,6 +288,15 @@ export default function PostsClient() {
             </select>
           </div>
 
+          <div className="field">
+            <label>Repeat</label>
+            <select value={repeat} onChange={(e) => setRepeat(e.target.value)}>
+              <option value="none">Doesn't repeat</option>
+              <option value="daily">Daily, at this same time</option>
+              <option value="weekly">Weekly, on this same day and time</option>
+            </select>
+          </div>
+
           {error && (
             <p style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{error}</p>
           )}
@@ -219,7 +313,8 @@ export default function PostsClient() {
           <div className="row" style={{ alignItems: "flex-start" }}>
             <div style={{ flex: 1 }}>
               <p style={{ margin: "0 0 8px", fontSize: 14, lineHeight: 1.6 }}>{p.content}</p>
-              {p.imageUrn && <span className="meta">📷 Photo attached</span>}
+              {p.imageUrn && <span className="meta">📷 Photo attached &nbsp; </span>}
+              {p.repeat !== "none" && <span className="meta">🔁 Repeats {p.repeat} &nbsp; </span>}
               <br />
               <span className="meta">
                 {p.status === "posted" && p.postedAt

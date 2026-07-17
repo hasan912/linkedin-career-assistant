@@ -32,6 +32,8 @@ model Post {
   content       String
   imageUrn      String?  // LinkedIn image URN (from the Images API), set if a photo is attached
   scheduledFor  DateTime // when it should be published
+  timeZone      String   @default("UTC") // timezone the schedule was created in, needed to compute recurrences
+  repeat        String   @default("none") // none | daily | weekly
   status        String   @default("pending") // pending | posted | failed
   errorMessage  String?
   postedAt      DateTime?
