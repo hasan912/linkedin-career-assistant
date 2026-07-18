@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body {
+      width: 320px;
+      font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: #14181C;
+      color: #F4F2ED;
+      margin: 0;
+      padding: 16px;
+    }
+    h1 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #C9C5BA;
+      margin: 0 0 12px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      color: #C9C5BA;
+      margin-bottom: 4px;
+      margin-top: 10px;
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      background: #1D2329;
+      border: 1px solid rgba(244,242,237,0.12);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #F4F2ED;
+      font-size: 13px;
+    }
+    button {
+      width: 100%;
+      margin-top: 14px;
+      background: #4E8C82;
+      color: #14181C;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { background: #6FB3A8; }
+    #status {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #C9C5BA;
+      min-height: 16px;
+    }
+    #optionsLink {
+      display: block;
+      margin-top: 12px;
+      font-size: 11px;
+      color: #6FB3A8;
+      text-decoration: none;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Save Job to Career Console</h1>
+
+  <label>Job title</label>
+  <input id="jobTitle" />
+
+  <label>Company</label>
+  <input id="company" placeholder="(optional)" />
+
+  <label>URL</label>
+  <input id="jobUrl" readonly />
+
+  <button id="saveBtn">Save to Career Console</button>
+  <div id="status"></div>
+  <a href="#" id="optionsLink">Set up API token →</a>
+
+  <script src="popup.js"></script>
+</body>
+</html>

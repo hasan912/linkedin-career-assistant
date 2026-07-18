@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { publishLinkedInPost } from "@/lib/linkedin";
 import { nextOccurrence } from "@/lib/timezone";
+import { decrypt } from "@/lib/encryption";
 
 // This endpoint is meant to be triggered by a scheduled job (see vercel.json),
 // e.g. every 15 minutes. It finds posts that are due and publishes them.
@@ -28,10 +29,10 @@ export async function GET(request) {
         throw new Error("LinkedIn access token expired - user must log in again");
       }
       await publishLinkedInPost({
-        accessToken: post.user.accessToken,
+        accessToken: decrypt(post.user.accessToken),
         authorSub: post.user.linkedinSub,
         text: post.content,
-        imageUrn: post.imageUrn || undefined,
+        imageUrns: post.imageUrns,
       });
       await prisma.post.update({
         where: { id: post.id },
@@ -45,7 +46,7 @@ export async function GET(request) {
           data: {
             userId: post.userId,
             content: post.content,
-            imageUrn: post.imageUrn,
+            imageUrns: post.imageUrns,
             scheduledFor: nextTime,
             timeZone: post.timeZone,
             repeat: post.repeat,

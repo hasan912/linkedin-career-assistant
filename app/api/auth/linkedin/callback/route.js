@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { createSession } from "@/lib/session";
+import { encrypt } from "@/lib/encryption";
 
 // Step 2 of OAuth: LinkedIn redirects back here with a ?code=...
 // We exchange that code for an access token, fetch the user's profile,
@@ -54,18 +55,19 @@ export async function GET(request) {
   // profile.sub is LinkedIn's unique, permanent id for this member
 
   const tokenExpires = new Date(Date.now() + expires_in * 1000);
+  const encryptedAccessToken = encrypt(access_token);
 
   const user = await prisma.user.upsert({
     where: { linkedinSub: profile.sub },
     update: {
-      accessToken: access_token,
+      accessToken: encryptedAccessToken,
       tokenExpires,
       name: profile.name,
       email: profile.email,
     },
     create: {
       linkedinSub: profile.sub,
-      accessToken: access_token,
+      accessToken: encryptedAccessToken,
       tokenExpires,
       name: profile.name,
       email: profile.email,

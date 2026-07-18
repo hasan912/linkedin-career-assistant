@@ -2,10 +2,15 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/session";
 import { uploadLinkedInImage } from "@/lib/linkedin";
+import { decrypt } from "@/lib/encryption";
+import { rateLimitResponse } from "@/lib/ratelimit";
 
 export async function POST(request) {
   const userId = await getSessionUserId();
   if (!userId) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  const blocked = await rateLimitResponse("upload", userId);
+  if (blocked) return blocked;
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user || new Date(user.tokenExpires) < new Date()) {
@@ -35,7 +40,7 @@ export async function POST(request) {
   try {
     const buffer = Buffer.from(await file.arrayBuffer());
     const imageUrn = await uploadLinkedInImage({
-      accessToken: user.accessToken,
+      accessToken: decrypt(user.accessToken),
       authorSub: user.linkedinSub,
       fileBuffer: buffer,
       contentType: file.type,

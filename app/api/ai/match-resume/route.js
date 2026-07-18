@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/session";
 import { generateText, parseJsonResponse } from "@/lib/ai";
+import { rateLimitResponse } from "@/lib/ratelimit";
 
 export async function POST(request) {
   const userId = await getSessionUserId();
   if (!userId) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  const blocked = await rateLimitResponse("ai", userId);
+  if (blocked) return blocked;
 
   const { resume, jobDescription } = await request.json();
   if (!resume?.trim() || !jobDescription?.trim()) {

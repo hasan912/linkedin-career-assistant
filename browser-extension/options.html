@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body {
+      max-width: 480px;
+      margin: 40px auto;
+      font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: #14181C;
+      color: #F4F2ED;
+      padding: 0 24px;
+    }
+    h1 { font-size: 20px; }
+    p { color: #C9C5BA; font-size: 14px; line-height: 1.6; }
+    label {
+      display: block;
+      font-size: 13px;
+      color: #C9C5BA;
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      background: #1D2329;
+      border: 1px solid rgba(244,242,237,0.12);
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: #F4F2ED;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 20px;
+      background: #4E8C82;
+      color: #14181C;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { background: #6FB3A8; }
+    #status { margin-top: 12px; font-size: 13px; color: #6FB3A8; }
+  </style>
+</head>
+<body>
+  <h1>Career Console Extension Settings</h1>
+  <p>
+    Paste your app's URL and the API token you generated on the Settings page
+    of your Career Console app (Dashboard → Settings → Generate Token).
+  </p>
+
+  <label>Career Console site URL</label>
+  <input id="apiBaseUrl" placeholder="https://your-app.vercel.app" />
+
+  <label>API Token</label>
+  <input id="apiToken" placeholder="paste your token here" />
+
+  <button id="saveBtn">Save</button>
+  <div id="status"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>

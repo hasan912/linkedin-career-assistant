@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/session";
+import { rateLimitResponse } from "@/lib/ratelimit";
 
 export async function GET() {
   const userId = await getSessionUserId();
@@ -16,6 +17,9 @@ export async function GET() {
 export async function POST(request) {
   const userId = await getSessionUserId();
   if (!userId) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  const blocked = await rateLimitResponse("write", userId);
+  if (blocked) return blocked;
 
   const { jobTitle, company, jobUrl, status, notes } = await request.json();
   if (!jobTitle || !company) {

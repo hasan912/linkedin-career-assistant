@@ -21,6 +21,10 @@ export async function PATCH(request, { params }) {
     }
   }
   if (body.notes !== undefined) data.notes = body.notes;
+  if (body.interviewAt !== undefined) {
+    data.interviewAt = body.interviewAt ? new Date(body.interviewAt) : null;
+    data.reminderSent = false; // a changed/cleared interview time should re-arm the reminder
+  }
 
   const updated = await prisma.application.update({ where: { id }, data });
   return NextResponse.json(updated);

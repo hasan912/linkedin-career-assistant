@@ -8,6 +8,9 @@ function todayStr() {
   return d.toISOString().slice(0, 10);
 }
 
+let nextImageId = 1;
+const MAX_IMAGES = 9; // LinkedIn's carousel limit
+
 const HOURS_12 = Array.from({ length: 12 }, (_, i) => i + 1); // 1..12
 const MINUTES = Array.from({ length: 60 }, (_, i) => i); // 0..59
 
@@ -21,11 +24,8 @@ export default function PostsClient() {
   const [timeZone, setTimeZone] = useState(detectBrowserTimezone());
   const [repeat, setRepeat] = useState("none");
 
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
-  const [imageUrn, setImageUrn] = useState(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [uploadError, setUploadError] = useState("");
+  // images: [{ id, previewUrl, urn, uploading, error }]
+  const [images, setImages] = useState([]);
   const fileInputRef = useRef(null);
 
   // AI post generator state
@@ -69,38 +69,42 @@ export default function PostsClient() {
     }
   }
 
-  async function handleImageSelect(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadError("");
-    setImageFile(file);
-    setImagePreviewUrl(URL.createObjectURL(file));
-    setImageUrn(null);
-    setUploadingImage(true);
+  async function handleImagesSelect(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
-    const res = await fetch("/api/posts/upload-image", { method: "POST", body: formData });
-    setUploadingImage(false);
+    const room = MAX_IMAGES - images.length;
+    const toAdd = files.slice(0, room);
 
-    if (res.ok) {
-      const data = await res.json();
-      setImageUrn(data.imageUrn);
-    } else {
-      const data = await res.json().catch(() => ({}));
-      setUploadError(data.error || "Couldn't upload image to LinkedIn.");
-      setImageFile(null);
-      setImagePreviewUrl(null);
+    for (const file of toAdd) {
+      const id = nextImageId++;
+      const previewUrl = URL.createObjectURL(file);
+      setImages((prev) => [...prev, { id, previewUrl, urn: null, uploading: true, error: null }]);
+
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const res = await fetch("/api/posts/upload-image", { method: "POST", body: formData });
+        if (res.ok) {
+          const data = await res.json();
+          setImages((prev) => prev.map((img) => (img.id === id ? { ...img, urn: data.imageUrn, uploading: false } : img)));
+        } else {
+          const data = await res.json().catch(() => ({}));
+          setImages((prev) => prev.map((img) => (img.id === id ? { ...img, uploading: false, error: data.error || "Upload failed" } : img)));
+        }
+      } catch {
+        setImages((prev) => prev.map((img) => (img.id === id ? { ...img, uploading: false, error: "Network error" } : img)));
+      }
     }
-  }
-
-  function removeImage() {
-    setImageFile(null);
-    setImagePreviewUrl(null);
-    setImageUrn(null);
-    setUploadError("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
+
+  function removeImage(id) {
+    setImages((prev) => prev.filter((img) => img.id !== id));
+  }
+
+  const anyUploading = images.some((img) => img.uploading);
+  const readyImageUrns = images.filter((img) => img.urn).map((img) => img.urn);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -109,8 +113,8 @@ export default function PostsClient() {
       setError("Write something first.");
       return;
     }
-    if (uploadingImage) {
-      setError("Image is still uploading — wait a moment.");
+    if (anyUploading) {
+      setError("Images are still uploading — wait a moment.");
       return;
     }
 
@@ -125,7 +129,7 @@ export default function PostsClient() {
       body: JSON.stringify({
         content,
         scheduledFor: scheduledForUtc,
-        imageUrn,
+        imageUrns: readyImageUrns,
         repeat,
         timeZone,
       }),
@@ -133,7 +137,7 @@ export default function PostsClient() {
     setLoading(false);
     if (res.ok) {
       setContent("");
-      removeImage();
+      setImages([]);
       setRepeat("none");
       load();
     } else {
@@ -211,37 +215,68 @@ export default function PostsClient() {
           </div>
 
           <div className="field">
-            <label>Photo (optional)</label>
-            {!imagePreviewUrl && (
+            <label>
+              Photos (optional — 1 photo, or 2-{MAX_IMAGES} for a carousel post)
+            </label>
+            {images.length < MAX_IMAGES && (
               <input
                 ref={fileInputRef}
                 type="file"
                 accept="image/jpeg,image/png,image/gif"
-                onChange={handleImageSelect}
+                multiple
+                onChange={handleImagesSelect}
               />
             )}
-            {imagePreviewUrl && (
-              <div style={{ marginTop: 8 }}>
-                <img
-                  src={imagePreviewUrl}
-                  alt="Selected attachment preview"
-                  style={{ maxWidth: 240, borderRadius: 8, display: "block", marginBottom: 8 }}
-                />
-                {uploadingImage && <span className="meta">Uploading to LinkedIn…</span>}
-                {imageUrn && !uploadingImage && (
-                  <span className="meta" style={{ color: "var(--signal-bright)" }}>
-                    ✓ Ready to attach
-                  </span>
-                )}
-                <div>
-                  <button type="button" className="btn btn-danger" style={{ marginTop: 8 }} onClick={removeImage}>
-                    Remove photo
-                  </button>
-                </div>
+            {images.length > 0 && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 10 }}>
+                {images.map((img) => (
+                  <div key={img.id} style={{ position: "relative" }}>
+                    <img
+                      src={img.previewUrl}
+                      alt="Selected attachment preview"
+                      style={{
+                        width: 90,
+                        height: 90,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                        display: "block",
+                        opacity: img.uploading ? 0.5 : 1,
+                      }}
+                    />
+                    {img.uploading && (
+                      <span className="meta" style={{ position: "absolute", bottom: 4, left: 4, fontSize: 9 }}>
+                        Uploading…
+                      </span>
+                    )}
+                    {img.error && (
+                      <span style={{ color: "var(--danger)", fontSize: 9, display: "block", maxWidth: 90 }}>
+                        {img.error}
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeImage(img.id)}
+                      style={{
+                        position: "absolute",
+                        top: -6,
+                        right: -6,
+                        background: "var(--danger)",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: 20,
+                        height: 20,
+                        fontSize: 12,
+                        cursor: "pointer",
+                        lineHeight: "20px",
+                      }}
+                      aria-label="Remove image"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
               </div>
-            )}
-            {uploadError && (
-              <p style={{ color: "var(--danger)", fontSize: 13, marginTop: 6 }}>{uploadError}</p>
             )}
           </div>
 
@@ -300,7 +335,7 @@ export default function PostsClient() {
           {error && (
             <p style={{ color: "var(--danger)", fontSize: 13, marginBottom: 12 }}>{error}</p>
           )}
-          <button type="submit" className="btn" disabled={loading || uploadingImage}>
+          <button type="submit" className="btn" disabled={loading || anyUploading}>
             {loading ? "Scheduling…" : "Schedule Post"}
           </button>
         </form>
@@ -313,7 +348,8 @@ export default function PostsClient() {
           <div className="row" style={{ alignItems: "flex-start" }}>
             <div style={{ flex: 1 }}>
               <p style={{ margin: "0 0 8px", fontSize: 14, lineHeight: 1.6 }}>{p.content}</p>
-              {p.imageUrn && <span className="meta">📷 Photo attached &nbsp; </span>}
+              {p.imageUrns?.length === 1 && <span className="meta">📷 Photo attached &nbsp; </span>}
+              {p.imageUrns?.length > 1 && <span className="meta">🖼️ {p.imageUrns.length}-photo carousel &nbsp; </span>}
               {p.repeat !== "none" && <span className="meta">🔁 Repeats {p.repeat} &nbsp; </span>}
               <br />
               <span className="meta">

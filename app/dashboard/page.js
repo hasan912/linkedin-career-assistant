@@ -12,6 +12,11 @@ export default async function Dashboard() {
   const postedCount = await prisma.post.count({ where: { userId, status: "posted" } });
   const applications = await prisma.application.count({ where: { userId } });
   const applied = await prisma.application.count({ where: { userId, status: "applied" } });
+  const upcomingInterviews = await prisma.application.findMany({
+    where: { userId, interviewAt: { gte: new Date() } },
+    orderBy: { interviewAt: "asc" },
+    take: 5,
+  });
 
   return (
     <div className="shell">
@@ -44,6 +49,23 @@ export default async function Dashboard() {
         <a href="/dashboard/posts" className="btn">Schedule a Post</a>
         <a href="/dashboard/jobs" className="btn btn-ghost">Browse Job Leads</a>
       </div>
+
+      {upcomingInterviews.length > 0 && (
+        <>
+          <div className="card-title" style={{ marginTop: 32 }}>Upcoming Interviews</div>
+          {upcomingInterviews.map((a) => (
+            <div className="card" key={a.id}>
+              <div className="row">
+                <div>
+                  <div className="job-title">{a.jobTitle}</div>
+                  <div className="job-company">{a.company}</div>
+                </div>
+                <span className="meta">{new Date(a.interviewAt).toLocaleString()}</span>
+              </div>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 }

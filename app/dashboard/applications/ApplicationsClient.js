@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 
 const STATUSES = ["saved", "applied", "interview", "offer", "rejected"];
 
+function toDateTimeLocalValue(isoString) {
+  if (!isoString) return "";
+  const d = new Date(isoString);
+  const tzOffsetMs = d.getTimezoneOffset() * 60000;
+  return new Date(d.getTime() - tzOffsetMs).toISOString().slice(0, 16);
+}
+
 export default function ApplicationsClient() {
   const [apps, setApps] = useState([]);
   const [jobTitle, setJobTitle] = useState("");
@@ -43,6 +50,18 @@ export default function ApplicationsClient() {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
+    });
+    load();
+  }
+
+  async function updateInterviewAt(id, localDateTimeValue) {
+    // localDateTimeValue is from <input type="datetime-local">, interpreted in
+    // the browser's own timezone, then converted to a correct UTC instant.
+    const iso = localDateTimeValue ? new Date(localDateTimeValue).toISOString() : null;
+    await fetch(`/api/applications/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ interviewAt: iso }),
     });
     load();
   }
@@ -122,6 +141,22 @@ export default function ApplicationsClient() {
             </div>
             <span className={`pill pill-${a.status}`}>{a.status}</span>
           </div>
+          {a.status === "interview" && (
+            <div className="field" style={{ marginTop: 12, marginBottom: 12, maxWidth: 260 }}>
+              <label>Interview date & time</label>
+              <input
+                type="datetime-local"
+                value={toDateTimeLocalValue(a.interviewAt)}
+                onChange={(e) => updateInterviewAt(a.id, e.target.value)}
+              />
+              {a.interviewAt && (
+                <span className="meta" style={{ display: "block", marginTop: 4 }}>
+                  📅 {new Date(a.interviewAt).toLocaleString()}
+                  {a.reminderSent ? " · reminder sent" : " · reminder pending"}
+                </span>
+              )}
+            </div>
+          )}
           <div className="row" style={{ marginTop: 14 }}>
             <select value={a.status} onChange={(e) => updateStatus(a.id, e.target.value)}>
               {STATUSES.map((s) => (

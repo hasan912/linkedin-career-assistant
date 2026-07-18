@@ -8,6 +8,7 @@ const links = [
   { href: "/dashboard/jobs", label: "Job Leads" },
   { href: "/dashboard/applications", label: "Applications" },
   { href: "/dashboard/resume-toolkit", label: "Resume Toolkit" },
+  { href: "/dashboard/settings", label: "Settings" },
 ];
 
 export default function Nav() {
