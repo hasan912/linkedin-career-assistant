@@ -197,6 +197,14 @@ export default function PostsClient() {
     load();
   }
 
+  function confirmDelete(p) {
+    const msg =
+      p.status === "pending"
+        ? "Cancel this scheduled post? It won't be published."
+        : "Remove this post from your list? (This doesn't delete anything from LinkedIn.)";
+    if (window.confirm(msg)) handleDelete(p.id);
+  }
+
   return (
     <>
       {/* Split layout: form (left) + live LinkedIn preview (right) */}
@@ -559,8 +567,16 @@ export default function PostsClient() {
             <span className={`pill pill-${p.status} flex-shrink-0`}>{p.status}</span>
           </div>
           {p.status === "pending" && (
-            <button className="btn btn-danger mt-3 !py-2 !text-[13px]" onClick={() => handleDelete(p.id)}>
+            <button className="btn btn-danger mt-3 !py-2 !text-[13px]" onClick={() => confirmDelete(p)}>
               Cancel
+            </button>
+          )}
+          {(p.status === "failed" || p.status === "posted") && (
+            <button className="btn btn-danger mt-3 !py-2 !text-[13px]" onClick={() => confirmDelete(p)}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5" aria-hidden="true">
+                <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13a1.5 1.5 0 0 0 1.5 1.4h7A1.5 1.5 0 0 0 17 20l1-13M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7" />
+              </svg>
+              Remove
             </button>
           )}
         </article>

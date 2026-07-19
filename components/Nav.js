@@ -192,10 +192,10 @@ export default function Nav() {
       </aside>
 
       {/* Mobile top bar */}
-      <header className="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-side/90 px-4 backdrop-blur-xl lg:hidden">
-        <a href="/dashboard" className="flex items-center gap-2.5 no-underline">
+      <header className="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between gap-3 border-b border-border bg-side/90 px-3 backdrop-blur-xl sm:px-4 lg:hidden">
+        <a href="/dashboard" className="flex min-w-0 items-center gap-2.5 no-underline">
           <span className="avatar h-8 w-8 rounded-lg text-xs">CC</span>
-          <span className="text-[14px] font-800 tracking-tight">
+          <span className="truncate text-[13px] font-800 tracking-tight sm:text-[14px]">
             Career<span className="grad-text font-extrabold">Console</span>
           </span>
         </a>
@@ -220,7 +220,7 @@ export default function Nav() {
             onClick={() => setMobileOpen(false)}
             className="absolute inset-0 cursor-pointer bg-black/60 backdrop-blur-sm"
           />
-          <aside className="animate-fade-up absolute inset-y-0 left-0 w-[280px] border-r border-border bg-side shadow-[var(--shadow-pop)]">
+          <aside className="animate-fade-up absolute inset-y-0 left-0 w-[88vw] max-w-[320px] border-r border-border bg-side shadow-[var(--shadow-pop)]">
             <button
               type="button"
               onClick={() => setMobileOpen(false)}
