@@ -1,12 +1,7 @@
 {
   "crons": [
-    {
-      "path": "/api/cron/publish",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/cron/interview-reminders",
-      "schedule": "0 1 * * *"
-    }
+    { "path": "/api/cron/publish", "schedule": "0 0 * * *" },
+    { "path": "/api/cron/interview-reminders", "schedule": "0 1 * * *" },
+    { "path": "/api/cron/weekly-digest", "schedule": "0 8 * * 1" }
   ]
 }

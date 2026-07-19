@@ -8,15 +8,21 @@ export default async function JobsPage() {
   if (!userId) redirect("/");
 
   return (
-    <div className="shell">
+    <>
       <Nav />
-      <h1 className="hero" style={{ fontSize: 28 }}>Job Leads</h1>
-      <p className="hero-sub">
-        Live listings pulled from Adzuna and RemoteOK. Review each one and apply
-        yourself through the original posting &mdash; save the ones you like to
-        your tracker to follow up later.
-      </p>
-      <JobsClient />
-    </div>
+      <div className="shell">
+        <div className="page">
+          <h1 className="hero">
+            Job <span className="grad-text">Leads</span>
+          </h1>
+          <p className="hero-sub">
+            Live listings pulled from Jooble, Adzuna and RemoteOK. Review each one and apply
+            yourself through the original posting &mdash; save the ones you like to
+            your tracker to follow up later.
+          </p>
+          <JobsClient />
+        </div>
+      </div>
+    </>
   );
 }

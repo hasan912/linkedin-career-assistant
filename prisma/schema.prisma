@@ -14,12 +14,15 @@ generator client {
 
 model User {
   id            String   @id @default(cuid())
-  linkedinSub   String   @unique // LinkedIn's unique person id (from OIDC "sub")
+  linkedinSub   String   @unique
   name          String?
   email         String?
-  accessToken   String   // LinkedIn OAuth access token, encrypted at rest (see lib/encryption.js)
+  accessToken   String
   tokenExpires  DateTime
-  apiTokenHash  String?  @unique // SHA-256 hash of the personal API token used by the browser extension
+  apiTokenHash  String?  @unique
+  theme         String   @default("dark")   // dark | light
+  dailyGoal     Int      @default(5)        // target applications per day
+  digestEmail   Boolean  @default(true)     // weekly digest opt-in
   createdAt     DateTime @default(now())
 
   posts         Post[]

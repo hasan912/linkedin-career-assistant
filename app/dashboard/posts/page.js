@@ -8,14 +8,20 @@ export default async function PostsPage() {
   if (!userId) redirect("/");
 
   return (
-    <div className="shell">
+    <>
       <Nav />
-      <h1 className="hero" style={{ fontSize: 28 }}>Scheduled Posts</h1>
-      <p className="hero-sub">
-        Write once, publish automatically. A background job checks every 15
-        minutes and publishes anything that's due, straight to your LinkedIn feed.
-      </p>
-      <PostsClient />
-    </div>
+      <div className="shell">
+        <div className="page">
+          <h1 className="hero">
+            Scheduled <span className="grad-text">Posts</span>
+          </h1>
+          <p className="hero-sub">
+            Write once, publish automatically. A background job checks every 15
+            minutes and publishes anything that&rsquo;s due, straight to your LinkedIn feed.
+          </p>
+          <PostsClient />
+        </div>
+      </div>
+    </>
   );
 }
