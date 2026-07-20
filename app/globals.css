@@ -240,7 +240,7 @@ a { color: inherit; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(120deg, var(--signal), #48808f, var(--accent));
+  background: linear-gradient(120deg, var(--signal), #01c8ff, var(--accent));
   background-size: 160% 100%;
   background-position: 0% 50%;
   color: #ffffff;

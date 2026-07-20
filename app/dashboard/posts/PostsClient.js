@@ -16,6 +16,32 @@ const MINUTES = Array.from({ length: 60 }, (_, i) => i); // 0..59
 
 const TONES = ["Professional", "Casual", "Storytelling", "Technical"];
 
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+// Nearest upcoming date (YYYY-MM-DD, local) that falls on `dayName` at HH:MM.
+// If today is that day but the time already passed, jumps to next week.
+function nextOccurrenceOf(dayName, timeStr) {
+  const targetDow = DAY_NAMES.indexOf(dayName);
+  const [hh, mm] = timeStr.split(":").map(Number);
+  const now = new Date();
+  const candidate = new Date(now);
+  let daysAhead = (targetDow - now.getDay() + 7) % 7;
+  candidate.setDate(now.getDate() + daysAhead);
+  candidate.setHours(hh, mm, 0, 0);
+  if (candidate <= now) candidate.setDate(candidate.getDate() + 7);
+  const y = candidate.getFullYear();
+  const m = String(candidate.getMonth() + 1).padStart(2, "0");
+  const d = String(candidate.getDate()).padStart(2, "0");
+  return { dateStr: `${y}-${m}-${d}`, hour24: hh, minute: mm };
+}
+
+const PERF_FIELDS = [
+  { key: "impressions", label: "Impressions" },
+  { key: "likes", label: "Likes" },
+  { key: "comments", label: "Comments" },
+  { key: "shares", label: "Shares" },
+];
+
 const REPEAT_OPTIONS = [
   {
     value: "none",
@@ -77,6 +103,18 @@ export default function PostsClient() {
   const [postsLoading, setPostsLoading] = useState(true);
   const [userName, setUserName] = useState("You");
 
+  // Best-time hint state
+  const [showBestTime, setShowBestTime] = useState(false);
+  const [bestTime, setBestTime] = useState(null); // { suggestion, slots }
+  const [bestTimeLoading, setBestTimeLoading] = useState(false);
+  const [bestTimeError, setBestTimeError] = useState("");
+
+  // Performance logging state: which post's form is open + its input values
+  const [perfOpenId, setPerfOpenId] = useState(null);
+  const [perfForm, setPerfForm] = useState({ impressions: "", likes: "", comments: "", shares: "" });
+  const [perfSaving, setPerfSaving] = useState(false);
+  const [perfError, setPerfError] = useState("");
+
   useEffect(() => {
     fetch("/api/user/preferences")
       .then((r) => (r.ok ? r.json() : null))
@@ -113,6 +151,64 @@ export default function PostsClient() {
     } else {
       const data = await res.json().catch(() => ({}));
       setAiError(data.error || "Couldn't generate a post. Try again.");
+    }
+  }
+
+  async function toggleBestTime() {
+    const opening = !showBestTime;
+    setShowBestTime(opening);
+    if (!opening || bestTime || bestTimeLoading) return;
+    setBestTimeError("");
+    setBestTimeLoading(true);
+    try {
+      const res = await fetch("/api/ai/best-time", { method: "POST" });
+      if (res.ok) {
+        setBestTime(await res.json());
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setBestTimeError(data.error || "Couldn't load suggestions.");
+      }
+    } catch {
+      setBestTimeError("Couldn't load suggestions.");
+    }
+    setBestTimeLoading(false);
+  }
+
+  function applySlot(slot) {
+    const { dateStr: d, hour24, minute: m } = nextOccurrenceOf(slot.day, slot.time);
+    setDateStr(d);
+    setHour12(hour24 % 12 === 0 ? 12 : hour24 % 12);
+    setMinute(m);
+    setAmpm(hour24 >= 12 ? "PM" : "AM");
+  }
+
+  function openPerfForm(postId) {
+    setPerfOpenId(postId);
+    setPerfForm({ impressions: "", likes: "", comments: "", shares: "" });
+    setPerfError("");
+  }
+
+  async function submitPerformance(e, postId) {
+    e.preventDefault();
+    setPerfError("");
+    setPerfSaving(true);
+    const res = await fetch(`/api/posts/${postId}/performance`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        impressions: Number(perfForm.impressions),
+        likes: Number(perfForm.likes),
+        comments: Number(perfForm.comments),
+        shares: Number(perfForm.shares),
+      }),
+    });
+    setPerfSaving(false);
+    if (res.ok) {
+      setPerfOpenId(null);
+      load(); // refresh so the card shows the new latest numbers
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setPerfError(data.error || "Couldn't save. Try again.");
     }
   }
 
@@ -348,6 +444,59 @@ export default function PostsClient() {
               )}
             </div>
 
+            {/* Best-time-to-post hint — collapsible */}
+            <div className="field !mb-3">
+              <button
+                type="button"
+                onClick={toggleBestTime}
+                aria-expanded={showBestTime}
+                className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-border-strong bg-white/[0.02] px-3.5 py-2.5 text-left transition-colors duration-200 hover:border-signal/50"
+              >
+                <span className="text-[13px] font-bold text-paper">💡 Best time to post</span>
+                <svg
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  className={"h-4 w-4 text-paper-dim transition-transform duration-300 " + (showBestTime ? "rotate-180" : "")}
+                  aria-hidden="true"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              {showBestTime && (
+                <div className="animate-fade-up mt-2.5 rounded-xl border border-border bg-ink-raised p-3.5">
+                  {bestTimeLoading && (
+                    <div className="flex items-center gap-2 text-[12.5px] text-paper-dim">
+                      <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/20 border-t-signal-bright" aria-hidden="true" />
+                      Analyzing your posting history…
+                    </div>
+                  )}
+                  {bestTimeError && (
+                    <p className="m-0 text-[12.5px] text-danger" role="alert">{bestTimeError}</p>
+                  )}
+                  {bestTime && !bestTimeLoading && (
+                    <>
+                      <p className="m-0 mb-2.5 text-[12.5px] leading-relaxed text-paper-dim">{bestTime.suggestion}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {bestTime.slots.map((slot) => (
+                          <button
+                            key={`${slot.day}-${slot.time}`}
+                            type="button"
+                            onClick={() => applySlot(slot)}
+                            title={slot.reason}
+                            className="chip"
+                          >
+                            {slot.day} {slot.time}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="m-0 mt-2 text-[11px] text-paper-dim/70">
+                        Click a slot to fill in the date &amp; time below.
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className="field">
               <label htmlFor="post-date">Publish date</label>
               <input id="post-date" type="date" value={dateStr} onChange={(e) => setDateStr(e.target.value)} />
@@ -566,6 +715,64 @@ export default function PostsClient() {
             </div>
             <span className={`pill pill-${p.status} flex-shrink-0`}>{p.status}</span>
           </div>
+          {p.status === "posted" && (
+            <div className="mt-3">
+              {/* Latest logged numbers */}
+              {p.performances?.length > 0 && (
+                <div className="mb-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg bg-white/[0.03] px-3 py-2">
+                  {PERF_FIELDS.map((f) => (
+                    <span key={f.key} className="text-[12px] text-paper-dim">
+                      {f.label}: <span className="font-bold text-paper">{p.performances[0][f.key]}</span>
+                    </span>
+                  ))}
+                  <span className="text-[11px] text-paper-dim/70">
+                    logged {new Date(p.performances[0].loggedAt).toLocaleDateString()}
+                  </span>
+                </div>
+              )}
+
+              {perfOpenId === p.id ? (
+                <form onSubmit={(e) => submitPerformance(e, p.id)} className="animate-fade-up rounded-xl border border-border bg-ink-raised p-3.5">
+                  <div className="mb-2.5 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+                    {PERF_FIELDS.map((f) => (
+                      <div key={f.key}>
+                        <label htmlFor={`perf-${f.key}-${p.id}`} className="mb-1 block text-[11px] font-semibold text-paper-dim">
+                          {f.label}
+                        </label>
+                        <input
+                          id={`perf-${f.key}-${p.id}`}
+                          type="number"
+                          min={0}
+                          required
+                          value={perfForm[f.key]}
+                          onChange={(e) => setPerfForm((prev) => ({ ...prev, [f.key]: e.target.value }))}
+                          className="w-full rounded-lg border border-border bg-ink-soft px-2.5 py-2 text-[13px] font-bold text-paper focus:border-signal focus:outline-none"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {perfError && (
+                    <p className="mb-2 mt-0 text-[12px] text-danger" role="alert">{perfError}</p>
+                  )}
+                  <div className="flex gap-2">
+                    <button type="submit" className="btn !py-2 !text-[13px]" disabled={perfSaving}>
+                      {perfSaving ? "Saving…" : "Submit"}
+                    </button>
+                    <button type="button" className="btn btn-ghost !py-2 !text-[13px]" onClick={() => setPerfOpenId(null)}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <button className="btn btn-ghost !py-2 !text-[13px]" onClick={() => openPerfForm(p.id)}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5" aria-hidden="true">
+                    <path d="M3 21h18M7 17V9M12 17V5M17 17v-7" />
+                  </svg>
+                  Log Performance
+                </button>
+              )}
+            </div>
+          )}
           {p.status === "pending" && (
             <button className="btn btn-danger mt-3 !py-2 !text-[13px]" onClick={() => confirmDelete(p)}>
               Cancel

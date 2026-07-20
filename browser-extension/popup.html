@@ -62,6 +62,51 @@
       text-decoration: none;
       text-align: center;
     }
+    /* Success overlay: green checkmark that draws itself in, shown for 2s */
+    #successOverlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #14181C;
+      z-index: 10;
+    }
+    #successOverlay.visible { display: flex; }
+    #successOverlay .circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #22C55E;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    #successOverlay svg path {
+      stroke-dasharray: 36;
+      stroke-dashoffset: 36;
+      animation: draw-check 0.4s 0.25s ease-out forwards;
+    }
+    #successOverlay .label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6FB3A8;
+      animation: fade-in 0.4s 0.4s both;
+    }
+    @keyframes pop-in {
+      from { transform: scale(0.4); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @keyframes draw-check {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -79,6 +124,15 @@
   <button id="saveBtn">Save to Career Console</button>
   <div id="status"></div>
   <a href="#" id="optionsLink">Set up API token →</a>
+
+  <div id="successOverlay" role="status" aria-live="polite">
+    <div class="circle">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#14181C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 12.5l5 5L20 7" />
+      </svg>
+    </div>
+    <div class="label">Saved to Career Console</div>
+  </div>
 
   <script src="popup.js"></script>
 </body>

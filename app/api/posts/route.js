@@ -10,6 +10,11 @@ export async function GET() {
   const posts = await prisma.post.findMany({
     where: { userId },
     orderBy: { scheduledFor: "asc" },
+    // Latest performance log per post, so the posts page can show engagement
+    // numbers without a request per post.
+    include: {
+      performances: { orderBy: { loggedAt: "desc" }, take: 1 },
+    },
   });
   return NextResponse.json(posts);
 }
