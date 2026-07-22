@@ -20,9 +20,27 @@ model User {
   accessToken   String
   tokenExpires  DateTime
   apiTokenHash  String?  @unique
+
+  // Google Calendar integration (optional) - tokens stored encrypted like accessToken.
+  // Connected separately from LinkedIn login, purely to add interview events to the
+  // user's calendar. googleTokenExpires is when the access token needs refreshing.
+  googleAccessToken   String?
+  googleRefreshToken  String?
+  googleTokenExpires  DateTime?
   theme         String   @default("dark")   // dark | light
   dailyGoal     Int      @default(5)        // target applications per day
   digestEmail   Boolean  @default(true)     // weekly digest opt-in
+
+  // Public portfolio page (/p/[username]) - only shown when isPublic is true
+  username      String?  @unique // lowercase alphanumeric + hyphens, 3-20 chars
+  bio           String?
+  title         String?  // e.g. "Frontend Developer"
+  skills        String[] @default([])
+  portfolioUrl  String?
+  githubUrl     String?
+  linkedinUrl   String?
+  isPublic      Boolean  @default(false)
+
   createdAt     DateTime @default(now())
 
   posts         Post[]
@@ -69,5 +87,6 @@ model Application {
   appliedDate   DateTime?
   interviewAt   DateTime? // scheduled interview date/time, if any
   reminderSent  Boolean  @default(false) // whether the 24h-before email reminder has gone out
+  googleCalEventId String? // id of the Google Calendar event created for this interview, if synced
   createdAt     DateTime @default(now())
 }

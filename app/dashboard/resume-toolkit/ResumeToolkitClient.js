@@ -41,10 +41,47 @@ function ScoreGauge({ score }) {
   );
 }
 
+/* Horizontal min–mid–max salary bar (no chart library needed) */
+function SalaryBar({ currency, range }) {
+  const max = Math.max(Number(range?.max) || 0, 1);
+  const min = Math.max(Number(range?.min) || 0, 0);
+  const mid = Math.max(Number(range?.mid) || 0, 0);
+  const leftPct = Math.min((min / max) * 100, 100);
+  const widthPct = Math.max(Math.min(((max - min) / max) * 100, 100), 2);
+  const midPct = Math.min((mid / max) * 100, 100);
+  const fmt = (n) =>
+    currency === "PKR" ? `Rs ${Number(n).toLocaleString()}` : `$${Number(n).toLocaleString()}`;
+
+  return (
+    <div>
+      <div className="mb-2 flex items-baseline justify-between">
+        <span className="text-[12px] font-extrabold uppercase tracking-[0.1em] text-paper-dim">{currency}</span>
+        <span className="text-[13px] font-bold text-paper">
+          {fmt(mid)} <span className="font-normal text-paper-dim">median / yr</span>
+        </span>
+      </div>
+      <div className="relative h-3 w-full rounded-full bg-ink-raised">
+        <div
+          className="absolute inset-y-0 rounded-full bg-gradient-to-r from-signal to-accent"
+          style={{ left: `${leftPct}%`, width: `${widthPct}%` }}
+        />
+        <div
+          className="absolute inset-y-[-3px] w-[3px] rounded-full bg-paper shadow-[0_0_0_2px_var(--ink-soft)]"
+          style={{ left: `calc(${midPct}% - 1.5px)` }}
+          title={`Median ${fmt(mid)}`}
+        />
+      </div>
+      <div className="mt-1.5 flex justify-between text-[11.5px] font-semibold text-paper-dim">
+        <span>{fmt(min)}</span>
+        <span>{fmt(max)}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function ResumeToolkitClient() {
   const [resume, setResume] = useState("");
   const [jobDescription, setJobDescription] = useState("");
-
   const [matchLoading, setMatchLoading] = useState(false);
   const [matchError, setMatchError] = useState("");
   const [matchResult, setMatchResult] = useState(null);
@@ -53,6 +90,14 @@ export default function ResumeToolkitClient() {
   const [letterError, setLetterError] = useState("");
   const [coverLetter, setCoverLetter] = useState("");
   const [copied, setCopied] = useState(false);
+
+  const [salaryOpen, setSalaryOpen] = useState(false);
+  const [salaryJobTitle, setSalaryJobTitle] = useState("");
+  const [salaryLocation, setSalaryLocation] = useState("Karachi, Pakistan");
+  const [salaryYears, setSalaryYears] = useState(2);
+  const [salaryLoading, setSalaryLoading] = useState(false);
+  const [salaryError, setSalaryError] = useState("");
+  const [salaryResult, setSalaryResult] = useState(null);
 
   function validateInputs(setErrorFn) {
     if (!resume.trim() || !jobDescription.trim()) {
@@ -105,6 +150,32 @@ export default function ResumeToolkitClient() {
     navigator.clipboard.writeText(coverLetter);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  }
+
+  async function handleSalary() {
+    setSalaryError("");
+    setSalaryResult(null);
+    if (!salaryJobTitle.trim() || !salaryLocation.trim()) {
+      setSalaryError("Enter a job title and location first.");
+      return;
+    }
+    setSalaryLoading(true);
+    const res = await fetch("/api/ai/salary-insights", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jobTitle: salaryJobTitle,
+        location: salaryLocation,
+        experienceYears: Number(salaryYears) || 0,
+      }),
+    });
+    setSalaryLoading(false);
+    if (res.ok) {
+      setSalaryResult(await res.json());
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setSalaryError(data.error || "Couldn't get an estimate. Try again.");
+    }
   }
 
   return (
@@ -279,6 +350,120 @@ export default function ResumeToolkitClient() {
           </div>
         </section>
       )}
+
+      {/* Salary Insights — collapsible */}
+      <section className="card !mb-0" aria-label="Salary insights">
+        <button
+          type="button"
+          onClick={() => setSalaryOpen((o) => !o)}
+          aria-expanded={salaryOpen}
+          className="flex w-full cursor-pointer items-center justify-between gap-3 border-none bg-transparent p-0 text-left"
+        >
+          <span className="card-title !mb-0 flex items-center gap-2.5">
+            <span aria-hidden="true">💰</span> Salary Insights
+          </span>
+          <svg
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            className={"h-5 w-5 flex-shrink-0 text-paper-dim transition-transform duration-200 " + (salaryOpen ? "rotate-180" : "")}
+            aria-hidden="true"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+
+        {salaryOpen && (
+          <div className="mt-5 animate-fade-up">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="field !mb-0">
+                <label htmlFor="salary-title">Job title</label>
+                <input
+                  id="salary-title"
+                  value={salaryJobTitle}
+                  onChange={(e) => setSalaryJobTitle(e.target.value)}
+                  placeholder="e.g. Frontend Developer"
+                />
+              </div>
+              <div className="field !mb-0">
+                <label htmlFor="salary-location">Location</label>
+                <input
+                  id="salary-location"
+                  value={salaryLocation}
+                  onChange={(e) => setSalaryLocation(e.target.value)}
+                />
+              </div>
+              <div className="field !mb-0">
+                <label htmlFor="salary-years">Years of experience</label>
+                <input
+                  id="salary-years"
+                  type="number"
+                  min={0}
+                  max={20}
+                  value={salaryYears}
+                  onChange={(e) => setSalaryYears(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <button className="btn mt-5 !px-7 !py-3" onClick={handleSalary} disabled={salaryLoading}>
+              {salaryLoading ? (
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]" aria-hidden="true">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+              )}
+              {salaryLoading ? "Estimating…" : "Get Estimate"}
+            </button>
+
+            {salaryError && (
+              <p className="mt-4 flex items-center gap-2 text-[14px] text-danger" role="alert">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-4 w-4 flex-shrink-0" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" /><path d="M12 8v5M12 16.5v.5" />
+                </svg>
+                {salaryError}
+              </p>
+            )}
+
+            {salaryResult && (
+              <div className="mt-6 flex flex-col gap-6 animate-fade-up">
+                {/* Salary range bars */}
+                <div className="flex flex-col gap-5 rounded-2xl border border-glass-border bg-white/[0.025] p-5">
+                  {salaryResult.rangePKR && <SalaryBar currency="PKR" range={salaryResult.rangePKR} />}
+                  {salaryResult.rangeUSD && <SalaryBar currency="USD" range={salaryResult.rangeUSD} />}
+                </div>
+
+                {/* Market context */}
+                {salaryResult.context && (
+                  <div>
+                    <div className="mb-2 text-[11px] font-extrabold uppercase tracking-[0.1em] text-signal-bright">Market context</div>
+                    <p className="m-0 text-[14px] leading-relaxed text-paper-dim">{salaryResult.context}</p>
+                  </div>
+                )}
+
+                {/* Negotiation tips */}
+                {salaryResult.tips?.length > 0 && (
+                  <div>
+                    <div className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.1em] text-success">Negotiation talking points</div>
+                    <div className="grid grid-cols-1 gap-2.5">
+                      {salaryResult.tips.map((tip, i) => (
+                        <div key={i} className="flex items-start gap-3.5 rounded-xl border border-glass-border bg-white/[0.025] px-4 py-3.5">
+                          <span className="avatar mt-0.5 h-7 w-7 flex-shrink-0 rounded-lg text-[12px]">{i + 1}</span>
+                          <span className="text-[13.5px] leading-relaxed text-paper">{tip}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Disclaimer */}
+                {salaryResult.disclaimer && (
+                  <p className="m-0 text-[11.5px] leading-relaxed text-paper-dim/70">{salaryResult.disclaimer}</p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </section>
     </>
   );
 }

@@ -42,6 +42,13 @@ const ICONS = {
       <path d="M14 2.5V8h5M9 12.5h6M9 16.5h6" />
     </svg>
   ),
+  portfolio: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
+      <path d="M19 3l.6 1.4L21 5l-1.4.6L19 7l-.6-1.4L17 5l1.4-.6L19 3Z" />
+    </svg>
+  ),
   settings: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <circle cx="12" cy="12" r="3" />
@@ -57,6 +64,7 @@ const links = [
   { href: "/dashboard/applications", label: "Applications", icon: "applications" },
   { href: "/dashboard/analytics", label: "Analytics", icon: "analytics" },
   { href: "/dashboard/resume-toolkit", label: "Resume Toolkit", icon: "resume" },
+  { href: "/dashboard/portfolio", label: "Portfolio", icon: "portfolio" },
   { href: "/dashboard/settings", label: "Settings", icon: "settings" },
 ];
 

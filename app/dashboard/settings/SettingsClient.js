@@ -16,6 +16,7 @@ export default function SettingsClient() {
   const [tokenLoading, setTokenLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [prefs, setPrefs] = useState({ digestEmail: true });
+  const [disconnecting, setDisconnecting] = useState(false);
 
   useEffect(() => {
     fetch("/api/settings/api-token")
@@ -48,6 +49,16 @@ export default function SettingsClient() {
       method: "PATCH", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ digestEmail: next }),
     });
+  }
+
+  async function disconnectGoogle() {
+    setDisconnecting(true);
+    const res = await fetch("/api/user/preferences", {
+      method: "PATCH", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ googleDisconnect: true }),
+    });
+    setDisconnecting(false);
+    if (res.ok) setPrefs((p) => ({ ...p, googleConnected: false }));
   }
 
   return (
@@ -93,6 +104,51 @@ export default function SettingsClient() {
           </span>
           <span className={"switch " + (prefs.digestEmail ? "switch-on" : "")} aria-hidden="true" />
         </button>
+      </section>
+
+      {/* Connected accounts */}
+      <section className="card !mb-0" aria-label="Connected accounts">
+        <div className="card-title">Connected Accounts</div>
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-glass-border bg-white/[0.025] px-4 py-3.5">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-border bg-ink-raised">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-paper-dim" aria-hidden="true">
+                <rect x="3" y="4.5" width="18" height="17" rx="2.5" />
+                <path d="M3 9.5h18M8 3v3M16 3v3" />
+              </svg>
+            </span>
+            <div className="min-w-0">
+              <div className="text-[14px] font-bold text-paper">Google Calendar</div>
+              <div className="mt-0.5 text-[12.5px] text-paper-dim">
+                {prefs.googleConnected
+                  ? "Add interview appointments to your calendar in one click."
+                  : "Connect to add your interview appointments to your calendar."}
+              </div>
+            </div>
+          </div>
+          {prefs.googleConnected ? (
+            <div className="flex flex-shrink-0 flex-col items-end gap-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-[11px] font-bold text-success">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+                Connected
+              </span>
+              <button
+                type="button"
+                onClick={disconnectGoogle}
+                disabled={disconnecting}
+                className="cursor-pointer border-none bg-transparent p-0 text-[12px] font-semibold text-paper-dim underline transition-colors duration-200 hover:text-danger disabled:opacity-60"
+              >
+                {disconnecting ? "Disconnecting…" : "Disconnect"}
+              </button>
+            </div>
+          ) : (
+            <a href="/api/auth/google/login" className="btn btn-ghost flex-shrink-0 !py-2 !text-[13px] no-underline">
+              Connect
+            </a>
+          )}
+        </div>
       </section>
 
       {/* Browser extension */}

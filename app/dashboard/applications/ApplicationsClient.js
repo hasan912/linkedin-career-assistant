@@ -55,6 +55,10 @@ export default function ApplicationsClient() {
   const [notesDraft, setNotesDraft] = useState("");
   const [notesSaving, setNotesSaving] = useState(false);
 
+  const [syncing, setSyncing] = useState(false);
+  const [syncError, setSyncError] = useState("");
+  const [needsGoogleAuth, setNeedsGoogleAuth] = useState(false);
+
   const selected = apps.find((a) => a.id === selectedId) || null;
 
   async function load() {
@@ -82,6 +86,8 @@ export default function ApplicationsClient() {
   function openDetails(app) {
     setSelectedId(app.id);
     setNotesDraft(app.notes || "");
+    setSyncError("");
+    setNeedsGoogleAuth(false);
   }
 
   async function handleAdd(e) {
@@ -139,6 +145,22 @@ export default function ApplicationsClient() {
     await fetch(`/api/applications/${id}`, { method: "DELETE" });
     setSelectedId(null);
     load();
+  }
+
+  async function syncCalendar(id) {
+    setSyncing(true);
+    setSyncError("");
+    setNeedsGoogleAuth(false);
+    const res = await fetch(`/api/applications/${id}/sync-calendar`, { method: "POST" });
+    const data = await res.json().catch(() => ({}));
+    setSyncing(false);
+    if (res.ok) {
+      load(); // refresh so the "Added to Calendar" badge appears
+    } else if (data.needsAuth) {
+      setNeedsGoogleAuth(true);
+    } else {
+      setSyncError(data.error || "Couldn't sync to your calendar. Try again.");
+    }
   }
 
   function exportCsv() {
@@ -402,6 +424,53 @@ export default function ApplicationsClient() {
                     {new Date(selected.interviewAt).toLocaleString()}
                     {selected.reminderSent ? " · reminder sent" : " · reminder pending"}
                   </span>
+                )}
+
+                {selected.interviewAt && (
+                  <div className="mt-3">
+                    {selected.googleCalEventId ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-[12.5px] font-bold text-success">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5" aria-hidden="true">
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                        Added to Google Calendar
+                      </span>
+                    ) : needsGoogleAuth ? (
+                      <a
+                        href="/api/auth/google/login"
+                        className="btn btn-ghost !py-2 !text-[13px] no-underline"
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
+                          <rect x="3" y="4.5" width="18" height="17" rx="2.5" />
+                          <path d="M3 9.5h18M8 3v3M16 3v3" />
+                        </svg>
+                        Connect Google Calendar
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn btn-ghost !py-2 !text-[13px]"
+                        onClick={() => syncCalendar(selected.id)}
+                        disabled={syncing}
+                      >
+                        {syncing ? (
+                          <span className="h-4 w-4 animate-spin rounded-full border-2 border-paper-dim/40 border-t-paper" aria-hidden="true" />
+                        ) : (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
+                            <rect x="3" y="4.5" width="18" height="17" rx="2.5" />
+                            <path d="M3 9.5h18M8 3v3M16 3v3M9 15l2 2 4-4" />
+                          </svg>
+                        )}
+                        {syncing ? "Syncing…" : "Sync to Google Calendar"}
+                      </button>
+                    )}
+                    {needsGoogleAuth && (
+                      <span className="meta mt-1.5 block">Connect your calendar, then sync again.</span>
+                    )}
+                    {syncError && (
+                      <span className="mt-1.5 block text-[12.5px] text-danger">{syncError}</span>
+                    )}
+                  </div>
                 )}
               </div>
             )}

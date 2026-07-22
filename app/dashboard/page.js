@@ -152,6 +152,23 @@ export default async function Dashboard() {
           </h1>
           <p className="hero-sub">Here&rsquo;s where things stand today.</p>
 
+          {/* Public portfolio banner */}
+          {user?.isPublic && user?.username && (
+            <a
+              href={`/p/${user.username}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-6 flex items-center gap-3 rounded-2xl border border-signal/35 bg-signal/10 px-5 py-3.5 text-[13.5px] font-semibold text-signal-bright no-underline transition-colors duration-200 hover:border-signal hover:bg-signal/15"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M3 12h18M12 3a13.5 13.5 0 0 1 0 18M12 3a13.5 13.5 0 0 0 0 18" />
+              </svg>
+              Your public profile is live &rarr;
+              <span className="ml-auto truncate font-mono text-[12px] font-normal text-paper-dim">/p/{user.username}</span>
+            </a>
+          )}
+
           {/* Stats row */}
           <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Key stats">
             {stats.map((s) => (
