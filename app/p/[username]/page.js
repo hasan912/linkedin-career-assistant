@@ -87,7 +87,7 @@ export default async function PublicPortfolio({ params }) {
   const initial = (user.name || user.username).charAt(0).toUpperCase();
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-ink">
+    <main className="relative  min-h-screen overflow-hidden bg-ink">
       {/* Ambient gradient + glow, same visual language as the landing page */}
       <div
         aria-hidden="true"

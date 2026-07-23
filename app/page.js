@@ -132,6 +132,16 @@ export default async function Home() {
             schedule them. Job leads come from public job-board APIs so you review and apply
             yourself — this app never auto-applies or auto-messages on your behalf.
           </p>
+          <nav className="mt-5 flex items-center justify-center gap-5 text-[12.5px]" aria-label="Legal">
+            <a href="/terms" className="text-paper-dim no-underline transition-colors hover:text-signal-bright">
+              Terms of Service
+            </a>
+            <span aria-hidden="true" className="text-border-strong">·</span>
+            <a href="/privacy" className="text-paper-dim no-underline transition-colors hover:text-signal-bright">
+              Privacy Policy
+            </a>
+          </nav>
+          <p className="mt-4 m-0 text-[12px] text-paper-dim">© 2026 Career Console</p>
         </footer>
       </div>
     </main>
