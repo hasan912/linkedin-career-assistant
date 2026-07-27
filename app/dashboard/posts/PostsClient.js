@@ -382,6 +382,40 @@ export default function PostsClient() {
                 id="post-content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
+                onPaste={(e) => {
+                  const html = e.clipboardData.getData("text/html");
+                  if (!html) return; // no rich content — let default plaintext paste happen
+                  e.preventDefault();
+                  // Parse the HTML and convert block elements into proper line breaks
+                  const doc = new DOMParser().parseFromString(html, "text/html");
+                  function walk(node) {
+                    if (node.nodeType === Node.TEXT_NODE) return node.textContent;
+                    if (node.nodeType !== Node.ELEMENT_NODE) return "";
+                    const tag = node.tagName.toLowerCase();
+                    // skip style/script
+                    if (tag === "style" || tag === "script") return "";
+                    const childText = Array.from(node.childNodes).map(walk).join("");
+                    // Block-level elements get double newlines (paragraph spacing)
+                    const blocks = ["p","div","h1","h2","h3","h4","h5","h6","li","blockquote","tr","section","article","header","footer"];
+                    if (tag === "br") return "\n";
+                    if (blocks.includes(tag)) return "\n" + childText + "\n";
+                    return childText;
+                  }
+                  let text = walk(doc.body);
+                  // Collapse 3+ consecutive newlines into 2 (keep paragraph spacing but remove excess)
+                  text = text.replace(/\n{3,}/g, "\n\n").trim();
+                  // Insert at cursor position
+                  const ta = e.target;
+                  const start = ta.selectionStart;
+                  const end = ta.selectionEnd;
+                  const before = content.slice(0, start);
+                  const after = content.slice(end);
+                  setContent(before + text + after);
+                  // Restore cursor position after React re-render
+                  requestAnimationFrame(() => {
+                    ta.selectionStart = ta.selectionEnd = start + text.length;
+                  });
+                }}
                 placeholder="What do you want to share on LinkedIn?"
                 className="!min-h-[150px]"
               />
@@ -677,7 +711,7 @@ export default function PostsClient() {
         <article className="card card-hover" key={p.id}>
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
-              <p className="m-0 mb-2 line-clamp-3 text-[14px] leading-relaxed">{p.content}</p>
+              <p className="m-0 mb-2 line-clamp-3 whitespace-pre-wrap text-[14px] leading-relaxed">{p.content}</p>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 {p.imageUrns?.length === 1 && (
                   <span className="meta inline-flex items-center gap-1">
