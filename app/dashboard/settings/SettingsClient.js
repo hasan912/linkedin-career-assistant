@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 
 const INSTALL_STEPS = [
-  <>Download the <code>browser-extension/</code> folder from the project ZIP.</>,
+  <>Go to <a href="https://github.com/hasan912/career-console-browser-extension" target="_blank" rel="noopener noreferrer" className="text-signal-bright no-underline underline-offset-2 hover:underline">github.com/hasan912/career-console-browser-extension</a> → click the green <strong>&ldquo;Code&rdquo;</strong> button → <strong>&ldquo;Download ZIP&rdquo;</strong> and extract it (or <code>git clone</code> the repo).</>,
   <>Open Chrome → <code>chrome://extensions</code> → enable &ldquo;Developer mode&rdquo; (top right).</>,
-  <>Click &ldquo;Load unpacked&rdquo; → select the <code>browser-extension</code> folder.</>,
+  <>Click &ldquo;Load unpacked&rdquo; → select the extracted <code>career-console-browser-extension</code> folder.</>,
   <>Click the extension icon → &ldquo;Options&rdquo; → paste your API token and this site&rsquo;s URL.</>,
   <>On any job posting page, click the icon → &ldquo;Save to Career Console&rdquo;.</>,
 ];
