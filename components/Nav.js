@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useTheme } from "./ThemeProvider";
 
 const ICONS = {
   overview: (
@@ -70,17 +71,16 @@ const links = [
 
 export default function Nav() {
   const pathname = usePathname();
-  const [theme, setTheme] = useState("dark");
+  const { theme, setTheme } = useTheme();
   const [userName, setUserName] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    // Load saved theme + name from server preference
+    // Load saved name from server preference
     fetch("/api/user/preferences")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data || data.error) return;
-        if (data.theme) applyTheme(data.theme);
         if (data.name) setUserName(data.name);
       })
       .catch(() => {});
@@ -91,14 +91,9 @@ export default function Nav() {
     setMobileOpen(false);
   }, [pathname]);
 
-  function applyTheme(t) {
-    setTheme(t);
-    document.body.className = t === "light" ? "theme-light" : "";
-  }
-
   async function toggleTheme() {
     const next = theme === "dark" ? "light" : "dark";
-    applyTheme(next);
+    setTheme(next);
     await fetch("/api/user/preferences", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },

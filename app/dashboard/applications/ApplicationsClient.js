@@ -298,7 +298,7 @@ export default function ApplicationsClient() {
         onClick={() => setShowAddModal(true)}
         aria-label="Add a job lead manually"
         title="Add a job lead"
-        className="fixed bottom-7 right-7 z-40 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-none bg-accent text-[#0B1114] transition-colors duration-200 hover:bg-amber-600 active:scale-95"
+        className="fixed bottom-7 right-7 z-40 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-none bg-accent text-[#0B1114] transition-colors duration-200 hover:bg-accent-amber-hover active:scale-95"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="h-6 w-6" aria-hidden="true">
           <path d="M12 5v14M5 12h14" />

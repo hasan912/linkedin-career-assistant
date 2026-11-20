@@ -8,15 +8,15 @@
 :root {
   --sidebar-w: 260px;
 
-  --text-primary: #F3F4F6;
-  --text-muted: #94A3B8;
-  --bg-canvas: #0B1114;
-  --bg-surface: #131C21;
-  --bg-elevated: #1D2A32;
+  --text-primary: #0B1114;
+  --text-muted: #475569;
+  --bg-canvas: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F1F5F9;
   --accent-amber: #F59E0B;
   --text-on-accent: #0B1114;
   --accent-amber-hover: #D97706;
-  --border-color: #283842;
+  --border-color: #CBD5E1;
 
   --ink: var(--bg-canvas);
   --ink-soft: var(--bg-surface);
@@ -43,11 +43,18 @@
   --font-body: "Inter", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 
-  color-scheme: dark;
+  color-scheme: light;
 }
 
-/* Light theme override — toggled by body.theme-light */
-body.theme-light {
+html[data-theme="dark"],
+body.theme-dark {
+  --text-primary: #F3F4F6;
+  --text-muted: #94A3B8;
+  --bg-canvas: #0B1114;
+  --bg-surface: #131C21;
+  --bg-elevated: #1D2A32;
+  --border-color: #283842;
+
   color-scheme: dark;
 }
 
@@ -63,6 +70,8 @@ body.theme-light {
   --color-signal-bright: var(--signal-bright);
   --color-accent: var(--accent);
   --color-accent-bright: var(--accent-bright);
+  --color-accent-amber-hover: var(--accent-amber-hover);
+  --color-text-on-accent: var(--text-on-accent);
   --color-warn: var(--warn);
   --color-danger: var(--danger);
   --color-success: var(--success);

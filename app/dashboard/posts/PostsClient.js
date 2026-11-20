@@ -647,9 +647,9 @@ export default function PostsClient() {
                   {userName.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <div className="text-[14px] font-bold leading-snug text-[rgba(0,0,0,0.9)]">{userName}</div>
-                  <div className="text-[12px] leading-snug text-[rgba(0,0,0,0.6)]">Frontend Developer</div>
-                  <div className="flex items-center gap-1 text-[12px] text-[rgba(0,0,0,0.6)]">
+                  <div className="text-[14px] font-bold leading-snug text-paper">{userName}</div>
+                  <div className="text-[12px] leading-snug text-paper-dim">Frontend Developer</div>
+                  <div className="flex items-center gap-1 text-[12px] text-paper-dim">
                     Just now ·
                     <svg viewBox="0 0 16 16" fill="currentColor" className="h-3 w-3" aria-hidden="true">
                       <path d="M8 1a7 7 0 1 0 7 7 7 7 0 0 0-7-7Zm4.4 7.5h-2.2a11.4 11.4 0 0 1-.6 3.4 5.6 5.6 0 0 0 2.8-3.4ZM8 12.9a9.5 9.5 0 0 1-1-4.4h2a9.5 9.5 0 0 1-1 4.4ZM3.6 8.5a5.6 5.6 0 0 0 2.8 3.4 11.4 11.4 0 0 1-.6-3.4Zm0-1h2.2a11.4 11.4 0 0 1 .6-3.4A5.6 5.6 0 0 0 3.6 7.5ZM8 3.1a9.5 9.5 0 0 1 1 4.4H7a9.5 9.5 0 0 1 1-4.4Zm2.4 4.4a11.4 11.4 0 0 1-.6-3.4 5.6 5.6 0 0 1 2.8 3.4Z" />
@@ -657,8 +657,8 @@ export default function PostsClient() {
                   </div>
                 </div>
               </div>
-              <div className="mb-2.5 whitespace-pre-wrap text-[14px] leading-relaxed text-[rgba(0,0,0,0.9)]">
-                {content || <span className="text-[rgba(0,0,0,0.4)]">Start typing to see your post preview…</span>}
+              <div className="mb-2.5 whitespace-pre-wrap text-[14px] leading-relaxed text-paper">
+                {content || <span className="text-paper-dim">Start typing to see your post preview…</span>}
               </div>
               {images.length > 0 && (
                 <div className={"mb-1 gap-1 overflow-hidden rounded-lg " + (images.length === 1 ? "" : "grid grid-cols-3")}>
@@ -672,7 +672,7 @@ export default function PostsClient() {
                   ))}
                 </div>
               )}
-              <div className="mt-1 flex items-center justify-around border-t border-[rgba(0,0,0,0.08)] pt-1">
+              <div className="mt-1 flex items-center justify-around border-t border-border pt-1">
                 {[
                   {
                     label: "Like",
@@ -682,7 +682,7 @@ export default function PostsClient() {
                   { label: "Repost", icon: <path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3" /> },
                   { label: "Send", icon: <path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" /> },
                 ].map((b) => (
-                  <span key={b.label} className="flex items-center gap-1.5 rounded-md px-3 py-2.5 text-[13px] font-semibold text-[rgba(0,0,0,0.6)]">
+                  <span key={b.label} className="flex items-center gap-1.5 rounded-md px-3 py-2.5 text-[13px] font-semibold text-paper-dim">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
                       {b.icon}
                     </svg>

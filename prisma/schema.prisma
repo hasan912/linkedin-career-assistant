@@ -27,7 +27,7 @@ model User {
   googleAccessToken   String?
   googleRefreshToken  String?
   googleTokenExpires  DateTime?
-  theme         String   @default("dark")   // dark | light
+  theme         String   @default("light")   // dark | light
   dailyGoal     Int      @default(5)        // target applications per day
   digestEmail   Boolean  @default(true)     // weekly digest opt-in
 
