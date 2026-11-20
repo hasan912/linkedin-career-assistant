@@ -73,7 +73,7 @@ export default function SettingsClient() {
           <div className="min-w-0">
             <div className="truncate text-[16px] font-extrabold tracking-tight">{prefs.name || "—"}</div>
             <div className="truncate text-[13px] text-paper-dim">{prefs.email || "No email on file"}</div>
-            <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-[#0a66c2]/40 bg-[#0a66c2]/10 px-2.5 py-1 text-[11px] font-bold text-[#6fa8dc]">
+            <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-border bg-ink-raised px-2.5 py-1 text-[11px] font-bold text-paper-dim">
               <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3" aria-hidden="true">
                 <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.55V9h3.57v11.45Z" />
               </svg>
@@ -109,7 +109,7 @@ export default function SettingsClient() {
       {/* Connected accounts */}
       <section className="card !mb-0" aria-label="Connected accounts">
         <div className="card-title">Connected Accounts</div>
-        <div className="flex items-center justify-between gap-4 rounded-xl border border-glass-border bg-white/[0.025] px-4 py-3.5">
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-glass-border bg-ink-soft px-4 py-3.5">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-border bg-ink-raised">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-paper-dim" aria-hidden="true">
@@ -199,7 +199,7 @@ export default function SettingsClient() {
 
         <button className="btn" onClick={generateToken} disabled={tokenLoading}>
           {tokenLoading && (
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-accent" aria-hidden="true" />
           )}
           {tokenLoading ? "Generating…" : hasToken ? "Generate New Token" : "Generate Token"}
         </button>
@@ -208,7 +208,7 @@ export default function SettingsClient() {
         <div className="card-title mt-8">Set Up the Extension</div>
         <ol className="m-0 flex list-none flex-col gap-2.5 p-0">
           {INSTALL_STEPS.map((step, i) => (
-            <li key={i} className="flex items-start gap-3.5 rounded-xl border border-glass-border bg-white/[0.025] px-4 py-3.5 transition-colors duration-200 hover:border-signal/40">
+            <li key={i} className="flex items-start gap-3.5 rounded-xl border border-glass-border bg-ink-soft px-4 py-3.5 transition-colors duration-200 hover:border-signal/40">
               <span className="avatar mt-0.5 h-7 w-7 flex-shrink-0 rounded-lg text-[12px]">{i + 1}</span>
               <span className="text-[13.5px] leading-relaxed text-paper-dim [&_code]:rounded [&_code]:bg-ink-raised [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[12px] [&_code]:text-signal-bright">
                 {step}
@@ -219,7 +219,7 @@ export default function SettingsClient() {
       </section>
 
       {/* Danger zone */}
-      <section className="rounded-2xl border border-danger/35 bg-danger/[0.04] p-6" aria-label="Danger zone">
+      <section className="rounded-2xl border border-border bg-ink-raised/[0.04] p-6" aria-label="Danger zone">
         <div className="card-title !text-danger">Danger Zone</div>
         <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <div>

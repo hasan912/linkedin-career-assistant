@@ -30,7 +30,7 @@ export async function GET(request) {
           html: `<p>Hi ${user.name || "there"},</p>
 <p>Your LinkedIn connection in Career Console expires in <strong>${daysLeft} day${daysLeft !== 1 ? "s" : ""}</strong>. After that, scheduled posts will fail silently.</p>
 <p><a href="${process.env.NEXT_PUBLIC_BASE_URL || "https://linkedin-autopost-smoky.vercel.app"}">Log in again to refresh it →</a></p>
-<p style="color:#888;font-size:12px">— Career Console</p>`,
+<p style="color:#94A3B8;font-size:12px">— Career Console</p>`,
         });
         expiryResults.push({ userId: user.id, daysLeft, sent: true });
       } catch (e) {
@@ -57,7 +57,7 @@ export async function GET(request) {
   <tr><td style="padding:6px 16px 6px 0">🗓️ Interviews</td><td><strong>${interviews}</strong></td></tr>
 </table>
 <p><a href="${process.env.NEXT_PUBLIC_BASE_URL || "https://linkedin-autopost-smoky.vercel.app"}/dashboard">Open Career Console →</a></p>
-<p style="color:#888;font-size:12px">— Career Console · <a href="${process.env.NEXT_PUBLIC_BASE_URL || "https://linkedin-autopost-smoky.vercel.app"}/dashboard/settings">unsubscribe</a></p>`,
+<p style="color:#94A3B8;font-size:12px">— Career Console · <a href="${process.env.NEXT_PUBLIC_BASE_URL || "https://linkedin-autopost-smoky.vercel.app"}/dashboard/settings">unsubscribe</a></p>`,
       });
       digestResults.push({ userId: user.id, sent: true });
     } catch (e) {

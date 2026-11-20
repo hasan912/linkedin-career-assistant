@@ -5,14 +5,7 @@ import { useEffect, useState } from "react";
 const FILTERS = ["Remote", "Full-time", "Part-time", "Contract"];
 
 // Deterministic avatar hue per company name
-const AVATAR_GRADIENTS = [
-  "linear-gradient(135deg, #4E8C82, #6366F1)",
-  "linear-gradient(135deg, #6366F1, #9333EA)",
-  "linear-gradient(135deg, #0A66C2, #4E8C82)",
-  "linear-gradient(135deg, #F59E0B, #EF4444)",
-  "linear-gradient(135deg, #22C55E, #4E8C82)",
-  "linear-gradient(135deg, #9333EA, #EF4444)",
-];
+const AVATAR_GRADIENTS = ["var(--accent-amber)"];
 
 function gradientFor(name) {
   let h = 0;
@@ -121,7 +114,7 @@ export default function JobsClient() {
           </div>
           <button type="submit" className="btn !py-3.5 sm:w-auto" disabled={loading}>
             {loading && (
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-accent" aria-hidden="true" />
             )}
             Search
           </button>
@@ -180,7 +173,7 @@ export default function JobsClient() {
             <article key={i} className="card card-hover !mb-0 flex flex-col">
               <div className="flex items-start gap-3.5">
                 <span
-                  className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl text-[16px] font-extrabold text-white shadow-[0_4px_10px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.25)]"
+                  className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-accent text-[16px] font-extrabold text-[#0B1114]"
                   style={{ background: gradientFor(job.company) }}
                   aria-hidden="true"
                 >

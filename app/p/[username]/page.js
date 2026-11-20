@@ -39,7 +39,7 @@ function LinkPill({ href, label, icon }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 rounded-full border border-border-strong bg-white/5 px-5 py-2.5 text-[13.5px] font-semibold text-paper no-underline transition-colors duration-200 hover:border-signal hover:text-signal-bright"
+      className="flex items-center gap-2 rounded-full border border-border-strong bg-ink-soft px-5 py-2.5 text-[13.5px] font-semibold text-paper no-underline transition-colors duration-200 hover:border-signal hover:text-signal-bright"
     >
       <span className="h-4 w-4 flex-shrink-0">{icon}</span>
       {label}
@@ -94,7 +94,7 @@ export default async function PublicPortfolio({ params }) {
         className="pointer-events-none absolute inset-0 opacity-60"
         style={{
           background:
-            "linear-gradient(115deg, rgba(78,140,130,0.18), rgba(99,102,241,0.12) 45%, transparent 75%)",
+            "var(--bg-canvas)",
         }}
       />
       <div aria-hidden="true" className="pointer-events-none absolute -top-32 left-1/3 h-96 w-96 rounded-full bg-signal/15 blur-[120px]" />

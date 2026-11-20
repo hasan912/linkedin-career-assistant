@@ -174,7 +174,7 @@ export default async function Dashboard() {
             {stats.map((s) => (
               <div
                 key={s.label}
-                className="card card-hover !mb-0 overflow-hidden after:absolute after:inset-x-6 after:bottom-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-signal/60 after:to-transparent"
+                className="card card-hover !mb-0 overflow-hidden"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -254,7 +254,7 @@ export default async function Dashboard() {
                       key={item.key}
                       className={
                         "flex items-center gap-3 rounded-xl px-4 py-3 " +
-                        (i % 2 === 1 ? "bg-white/[0.025]" : "")
+                        (i % 2 === 1 ? "bg-ink-raised" : "")
                       }
                     >
                       <span

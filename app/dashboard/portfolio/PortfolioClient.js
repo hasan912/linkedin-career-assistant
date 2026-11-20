@@ -229,7 +229,7 @@ export default function PortfolioClient() {
                     type="button"
                     onClick={() => removeSkill(skill)}
                     aria-label={`Remove ${skill}`}
-                    className="flex h-4.5 w-4.5 cursor-pointer items-center justify-center rounded-full border-none bg-white/10 p-0 text-[11px] leading-none text-paper transition-colors duration-150 hover:bg-danger/60"
+                    className="flex h-4.5 w-4.5 cursor-pointer items-center justify-center rounded-full border-none bg-ink-raised p-0 text-[11px] leading-none text-paper transition-colors duration-150 hover:bg-ink-raised/60"
                   >
                     ×
                   </button>
@@ -307,7 +307,7 @@ export default function PortfolioClient() {
         <div className="mt-5 flex items-center gap-3">
           <button className="btn" onClick={save} disabled={saving}>
             {saving && (
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-accent" aria-hidden="true" />
             )}
             {saving ? "Saving…" : "Save Portfolio"}
           </button>

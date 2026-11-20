@@ -7,8 +7,8 @@ import {
 } from "recharts";
 
 const STATUS_COLORS = {
-  saved: "#94A0AE", applied: "#4E8C82", interview: "#F59E0B",
-  offer: "#22C55E", rejected: "#EF4444",
+  saved: "var(--text-muted)", applied: "var(--bg-elevated)", interview: "var(--accent-amber)",
+  offer: "var(--text-primary)", rejected: "var(--text-muted)",
 };
 
 /* Animated circular progress ring (SVG) */
@@ -29,16 +29,10 @@ function ProgressRing({ value, max = 100, size = 180, stroke = 12, color, childr
   return (
     <div className="relative inline-flex items-center justify-center">
       <svg width={size} height={size} role="img" aria-label={`${Math.round(pct * 100)} percent`}>
-        <defs>
-          <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#6FB3A8" />
-            <stop offset="100%" stopColor="#818CF8" />
-          </linearGradient>
-        </defs>
         <circle cx={c} cy={c} r={r} fill="none" stroke="var(--ink-raised)" strokeWidth={stroke} />
         <circle
           cx={c} cy={c} r={r} fill="none"
-          stroke={color || "url(#ring-grad)"}
+          stroke={color || "var(--accent-amber)"}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={circ}
@@ -141,7 +135,7 @@ export default function AnalyticsClient() {
 
   const goalDone = Math.min(data.todayCount, prefs.dailyGoal || 1);
   const goalPct = data.todayCount / (prefs.dailyGoal || 1);
-  const goalColor = goalPct >= 1 ? "#22C55E" : goalPct >= 0.5 ? "#F59E0B" : undefined;
+  const goalColor = goalPct >= 0.5 ? "var(--accent-amber)" : undefined;
 
   // Post performance: chart series (only posts that have a log) + top 3
   const perfLogged = (perfItems || []).filter((p) => p.performance);
@@ -210,7 +204,7 @@ export default function AnalyticsClient() {
                       stroke="none"
                     >
                       {pieData.map((entry) => (
-                        <Cell key={entry.name} fill={STATUS_COLORS[entry.name] || "#888"} />
+                        <Cell key={entry.name} fill={STATUS_COLORS[entry.name] || "var(--text-muted)"} />
                       ))}
                     </Pie>
                     <Tooltip content={<ChartTooltip />} />
@@ -243,13 +237,6 @@ export default function AnalyticsClient() {
           <div className="card-title">Applications Over Time (last 12 weeks)</div>
           <ResponsiveContainer width="100%" height={240}>
             <AreaChart data={data.byWeek} margin={{ top: 10, right: 8, left: -22, bottom: 0 }}>
-              <defs>
-                <linearGradient id="area-grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#4E8C82" stopOpacity={0.55} />
-                  <stop offset="55%" stopColor="#6366F1" stopOpacity={0.18} />
-                  <stop offset="100%" stopColor="#6366F1" stopOpacity={0.02} />
-                </linearGradient>
-              </defs>
               <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--paper-dim)" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: "var(--paper-dim)" }} allowDecimals={false} axisLine={false} tickLine={false} />
               <Tooltip content={<ChartTooltip />} />
@@ -257,11 +244,11 @@ export default function AnalyticsClient() {
                 type="monotone"
                 dataKey="count"
                 name="applications"
-                stroke="#6FB3A8"
+                stroke="var(--accent-amber)"
                 strokeWidth={2.5}
-                fill="url(#area-grad)"
+                fill="var(--accent-amber)"
                 dot={false}
-                activeDot={{ r: 5, fill: "#6FB3A8", strokeWidth: 0 }}
+                activeDot={{ r: 5, fill: "var(--accent-amber)", strokeWidth: 0 }}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -341,10 +328,10 @@ export default function AnalyticsClient() {
                   type="monotone"
                   dataKey="impressions"
                   name="impressions"
-                  stroke="#6FB3A8"
+                  stroke="var(--accent-amber)"
                   strokeWidth={2.5}
-                  dot={{ r: 4, fill: "#6FB3A8", strokeWidth: 0 }}
-                  activeDot={{ r: 6, fill: "#6FB3A8", strokeWidth: 0 }}
+                  dot={{ r: 4, fill: "var(--accent-amber)", strokeWidth: 0 }}
+                  activeDot={{ r: 6, fill: "var(--accent-amber)", strokeWidth: 0 }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -356,11 +343,11 @@ export default function AnalyticsClient() {
               </div>
               <ol className="m-0 flex list-none flex-col gap-2.5 p-0">
                 {perfTop3.map((p, i) => (
-                  <li key={p.id} className="flex items-center gap-3.5 rounded-xl bg-white/3 px-4 py-3">
+                  <li key={p.id} className="flex items-center gap-3.5 rounded-xl bg-ink-soft px-4 py-3">
                     <span
                       className={
                         "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[13px] font-black " +
-                        (i === 0 ? "bg-linear-to-br from-signal to-accent text-white" : "bg-ink-raised text-paper-dim")
+                        (i === 0 ? "bg-accent text-[#0B1114]" : "bg-ink-raised text-paper-dim")
                       }
                       aria-hidden="true"
                     >

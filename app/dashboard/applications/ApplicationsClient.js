@@ -231,7 +231,7 @@ export default function ApplicationsClient() {
               key={status}
               aria-label={`${STATUS_LABELS[status]} column`}
               className={
-                "flex min-h-[300px] w-[240px] flex-shrink-0 flex-col rounded-2xl border border-glass-border border-t-2 bg-white/[0.025] backdrop-blur-xl " +
+                "flex min-h-[300px] w-[240px] flex-shrink-0 flex-col rounded-2xl border border-glass-border border-t-2 bg-ink-soft backdrop-blur-xl " +
                 STATUS_ACCENTS[status]
               }
             >
@@ -239,7 +239,7 @@ export default function ApplicationsClient() {
                 <h2 className="m-0 text-[12px] font-extrabold uppercase tracking-[0.08em] text-paper-dim">
                   {STATUS_LABELS[status]}
                 </h2>
-                <span className="flex h-[22px] min-w-[22px] items-center justify-center rounded-full bg-white/[0.06] px-1.5 text-[11px] font-extrabold text-paper-dim">
+                <span className="flex h-[22px] min-w-[22px] items-center justify-center rounded-full bg-ink-raised px-1.5 text-[11px] font-extrabold text-paper-dim">
                   {byStatus[status].length}
                 </span>
               </header>
@@ -298,7 +298,7 @@ export default function ApplicationsClient() {
         onClick={() => setShowAddModal(true)}
         aria-label="Add a job lead manually"
         title="Add a job lead"
-        className="fixed bottom-7 right-7 z-40 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-none bg-gradient-to-br from-signal to-accent text-white shadow-[0_8px_24px_rgba(78,140,130,0.45),inset_0_1px_0_rgba(255,255,255,0.25)] transition-transform duration-200 ease-out hover:-translate-y-1 hover:scale-105 active:scale-95"
+        className="fixed bottom-7 right-7 z-40 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-none bg-accent text-[#0B1114] transition-colors duration-200 hover:bg-amber-600 active:scale-95"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="h-6 w-6" aria-hidden="true">
           <path d="M12 5v14M5 12h14" />
@@ -314,14 +314,14 @@ export default function ApplicationsClient() {
             onClick={() => setShowAddModal(false)}
             className="absolute inset-0 cursor-pointer border-none bg-black/60 backdrop-blur-sm"
           />
-          <div className="animate-fade-up card relative !m-0 w-full max-w-md !p-6 shadow-[var(--shadow-pop)]">
+          <div className="animate-fade-up card relative !m-0 w-full max-w-md !p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="m-0 text-[17px] font-extrabold tracking-tight">Add a job lead</h2>
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}
                 aria-label="Close dialog"
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border-none bg-white/5 text-paper-dim transition-colors duration-200 hover:text-paper"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border-none bg-ink-soft text-paper-dim transition-colors duration-200 hover:text-paper"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-4 w-4" aria-hidden="true">
                   <path d="M6 6l12 12M18 6L6 18" />
@@ -343,7 +343,7 @@ export default function ApplicationsClient() {
               </div>
               <button className="btn w-full !py-3" disabled={loading}>
                 {loading && (
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-accent" aria-hidden="true" />
                 )}
                 {loading ? "Adding…" : "Add to Tracker"}
               </button>
@@ -361,7 +361,7 @@ export default function ApplicationsClient() {
             onClick={() => setSelectedId(null)}
             className="absolute inset-0 cursor-pointer border-none bg-black/60 backdrop-blur-sm"
           />
-          <aside className="scroll-thin absolute inset-y-0 right-0 w-full max-w-md overflow-y-auto border-l border-border bg-ink-soft p-6 shadow-[var(--shadow-pop)]" style={{ animation: "fade-up 0.3s ease-out both" }}>
+          <aside className="scroll-thin absolute inset-y-0 right-0 w-full max-w-md overflow-y-auto border-l border-border bg-ink-soft p-6" style={{ animation: "fade-up 0.3s ease-out both" }}>
             <div className="mb-5 flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
                 <span className="avatar h-12 w-12 rounded-xl text-[18px]">
@@ -376,7 +376,7 @@ export default function ApplicationsClient() {
                 type="button"
                 onClick={() => setSelectedId(null)}
                 aria-label="Close details"
-                className="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-lg border-none bg-white/5 text-paper-dim transition-colors duration-200 hover:text-paper"
+                className="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-lg border-none bg-ink-soft text-paper-dim transition-colors duration-200 hover:text-paper"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-4 w-4" aria-hidden="true">
                   <path d="M6 6l12 12M18 6L6 18" />

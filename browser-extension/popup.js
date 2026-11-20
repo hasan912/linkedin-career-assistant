@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", async () => {
+﻿document.addEventListener("DOMContentLoaded", async () => {
   const jobTitleEl = document.getElementById("jobTitle");
   const companyEl = document.getElementById("company");
   const jobUrlEl = document.getElementById("jobUrl");
@@ -37,12 +37,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!apiToken || !apiBaseUrl) {
       statusEl.textContent = "Set up your API token and site URL in Options first.";
-      statusEl.style.color = "#B26A00";
+      statusEl.style.color = "#D97706";
       return;
     }
 
-    statusEl.textContent = "Saving…";
-    statusEl.style.color = "#C9C5BA";
+    statusEl.textContent = "Savingâ€¦";
+    statusEl.style.color = "#94A3B8";
     saveBtn.disabled = true;
 
     try {
@@ -66,11 +66,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
         const data = await res.json().catch(() => ({}));
         statusEl.textContent = data.error || "Failed to save.";
-        statusEl.style.color = "#B5544B";
+        statusEl.style.color = "#94A3B8";
       }
     } catch (err) {
       statusEl.textContent = "Network error - check the site URL in Options.";
-      statusEl.style.color = "#B5544B";
+      statusEl.style.color = "#94A3B8";
     }
     saveBtn.disabled = false;
   }

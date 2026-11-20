@@ -133,14 +133,14 @@ export default function Nav() {
               className={
                 "group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[13.5px] font-semibold no-underline transition-all duration-200 ease-out " +
                 (active
-                  ? "bg-gradient-to-r from-signal to-accent text-white shadow-[0_4px_14px_rgba(78,140,130,0.35),inset_0_1px_0_rgba(255,255,255,0.2)]"
-                  : "text-paper-dim hover:bg-white/5 hover:text-paper")
+                  ? "bg-accent text-[#0B1114]"
+                  : "text-paper-dim hover:bg-ink-raised hover:text-paper")
               }
             >
               <span
                 className={
                   "h-[18px] w-[18px] flex-shrink-0 transition-colors duration-200 " +
-                  (active ? "text-white" : "text-paper-dim group-hover:text-signal-bright")
+                  (active ? "text-[#0B1114]" : "text-paper-dim group-hover:text-signal-bright")
                 }
               >
                 {ICONS[l.icon]}
@@ -166,7 +166,7 @@ export default function Nav() {
             onClick={toggleTheme}
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            className="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-xl border border-border-strong bg-white/5 text-paper-dim transition-colors duration-200 hover:border-signal hover:text-signal-bright"
+            className="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-xl border border-border-strong bg-ink-soft text-paper-dim transition-colors duration-200 hover:border-signal hover:text-signal-bright"
           >
             {theme === "dark" ? (
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-[17px] w-[17px]" aria-hidden="true">
@@ -182,7 +182,7 @@ export default function Nav() {
           <form action="/api/auth/logout" method="POST" className="flex-1">
             <button
               type="submit"
-              className="w-full cursor-pointer rounded-xl border border-border-strong bg-white/5 px-3 py-2 text-[13px] font-semibold text-paper-dim transition-colors duration-200 hover:border-danger/50 hover:text-danger"
+              className="w-full cursor-pointer rounded-xl border border-border-strong bg-ink-soft px-3 py-2 text-[13px] font-semibold text-paper-dim transition-colors duration-200 hover:border-signal hover:text-paper"
             >
               Log out
             </button>
@@ -211,7 +211,7 @@ export default function Nav() {
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Open navigation menu"
-          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-border-strong bg-white/5 text-paper transition-colors duration-200 hover:border-signal"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-border-strong bg-ink-soft text-paper transition-colors duration-200 hover:border-signal"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-5 w-5" aria-hidden="true">
             <path d="M4 7h16M4 12h16M4 17h16" />
@@ -228,7 +228,7 @@ export default function Nav() {
             onClick={() => setMobileOpen(false)}
             className="absolute inset-0 cursor-pointer bg-black/60 backdrop-blur-sm"
           />
-          <aside className="animate-fade-up absolute inset-y-0 left-0 w-[88vw] max-w-[320px] border-r border-border bg-side shadow-[var(--shadow-pop)]">
+          <aside className="animate-fade-up absolute inset-y-0 left-0 w-[88vw] max-w-[320px] border-r border-border bg-side">
             <button
               type="button"
               onClick={() => setMobileOpen(false)}

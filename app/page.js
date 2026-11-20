@@ -80,32 +80,6 @@ export default async function Home() {
       className="relative min-h-screen overflow-hidden bg-ink"
       style={{ fontFamily: "var(--font-body)" }}
     >
-      {/* Animated gradient wash */}
-      <div
-        aria-hidden="true"
-        className="animate-gradient pointer-events-none absolute inset-0 opacity-70"
-        style={{
-          background:
-            "linear-gradient(115deg, rgba(78,140,130,0.22), rgba(99,102,241,0.16) 45%, rgba(147,51,234,0.14) 70%, rgba(78,140,130,0.18))",
-          backgroundSize: "300% 300%",
-        }}
-      />
-      {/* Glow orbs */}
-      <div
-        aria-hidden="true"
-        className="animate-float pointer-events-none absolute -top-32 left-1/4 h-105 w-105 rounded-full bg-signal/20 blur-[120px]"
-      />
-      <div
-        aria-hidden="true"
-        className="animate-float pointer-events-none absolute right-1/5 top-40 h-90 w-90 rounded-full bg-accent/20 blur-[120px]"
-        style={{ animationDelay: "-3.5s" }}
-      />
-      {/* Dot grid overlay */}
-      <div
-        aria-hidden="true"
-        className="dot-grid pointer-events-none absolute inset-0 opacity-40 mask-[radial-gradient(ellipse_70%_60%_at_50%_35%,black,transparent)]"
-      />
-
       <div className="relative mx-auto max-w-6xl px-6">
         {/* ============================================================
             SECTION 1 — Header / Nav
@@ -147,7 +121,7 @@ export default async function Home() {
 
           <a
             href="/api/auth/linkedin/login"
-            className="rounded-full border border-border-strong bg-white/5 px-5 py-2 text-[13px] font-semibold text-paper no-underline backdrop-blur-xl transition-colors duration-200 hover:border-signal hover:text-signal-bright"
+            className="rounded-full border border-border-strong bg-ink-soft px-5 py-2 text-[13px] font-semibold text-paper no-underline backdrop-blur-xl transition-colors duration-200 hover:border-signal hover:text-signal-bright"
           >
             Sign in with LinkedIn
           </a>
@@ -157,7 +131,7 @@ export default async function Home() {
             SECTION 2 — Hero
         ============================================================= */}
         <section className="flex flex-col items-center pb-20 pt-16 text-center">
-          <div className="animate-fade-up mb-6 inline-flex items-center gap-2 rounded-full border border-glass-border bg-white/5 px-4 py-1.5 text-[12px] font-semibold text-paper-dim backdrop-blur-xl">
+          <div className="animate-fade-up mb-6 inline-flex items-center gap-2 rounded-full border border-glass-border bg-ink-soft px-4 py-1.5 text-[12px] font-semibold text-paper-dim backdrop-blur-xl">
             <span className="h-1.5 w-1.5 rounded-full bg-success" />
             Built on LinkedIn&rsquo;s official API &mdash; no scraping, ever
           </div>

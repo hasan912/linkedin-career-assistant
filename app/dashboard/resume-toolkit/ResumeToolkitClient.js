@@ -11,7 +11,7 @@ function ScoreGauge({ score }) {
     return () => cancelAnimationFrame(t);
   }, [score]);
 
-  const color = score >= 75 ? "#22C55E" : score >= 50 ? "#F59E0B" : "#EF4444";
+  const color = score >= 50 ? "var(--accent-amber)" : "var(--text-muted)";
   const size = 160;
   const stroke = 12;
   const r = (size - stroke) / 2;
@@ -62,11 +62,11 @@ function SalaryBar({ currency, range }) {
       </div>
       <div className="relative h-3 w-full rounded-full bg-ink-raised">
         <div
-          className="absolute inset-y-0 rounded-full bg-gradient-to-r from-signal to-accent"
+          className="absolute inset-y-0 rounded-full bg-accent"
           style={{ left: `${leftPct}%`, width: `${widthPct}%` }}
         />
         <div
-          className="absolute inset-y-[-3px] w-[3px] rounded-full bg-paper shadow-[0_0_0_2px_var(--ink-soft)]"
+          className="absolute inset-y-[-3px] w-[3px] rounded-full bg-paper"
           style={{ left: `calc(${midPct}% - 1.5px)` }}
           title={`Median ${fmt(mid)}`}
         />
@@ -197,14 +197,14 @@ export default function ResumeToolkitClient() {
             value={resume}
             onChange={(e) => setResume(e.target.value)}
             placeholder="Paste your resume text here…"
-            className="min-h-[300px] w-full resize-y rounded-xl border border-border bg-ink-raised p-4 text-[14px] leading-relaxed text-paper transition-[border-color,box-shadow] duration-200 placeholder:text-paper-dim/60 focus:border-signal focus:shadow-[0_0_0_3px_rgba(78,140,130,0.18)] focus:outline-none"
+            className="min-h-[300px] w-full resize-y rounded-xl border border-border bg-ink-raised p-4 text-[14px] leading-relaxed text-paper transition-[border-color] duration-200 placeholder:text-paper-dim/60 focus:border-signal focus:outline-none"
           />
           <div className="meta mt-2 text-right" aria-live="polite">{resume.length.toLocaleString()} characters</div>
         </div>
 
         <div className="card !mb-0">
           <div className="mb-3 flex items-center gap-2.5">
-            <span className="avatar flex h-8 w-8 rounded-lg !bg-gradient-to-br !from-accent !to-signal">
+            <span className="avatar flex h-8 w-8 rounded-lg !bg-accent">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
                 <rect x="3" y="7" width="18" height="13" rx="2.5" />
                 <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7" />
@@ -218,7 +218,7 @@ export default function ResumeToolkitClient() {
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
             placeholder="Paste the job posting text here…"
-            className="min-h-[300px] w-full resize-y rounded-xl border border-border bg-ink-raised p-4 text-[14px] leading-relaxed text-paper transition-[border-color,box-shadow] duration-200 placeholder:text-paper-dim/60 focus:border-signal focus:shadow-[0_0_0_3px_rgba(78,140,130,0.18)] focus:outline-none"
+            className="min-h-[300px] w-full resize-y rounded-xl border border-border bg-ink-raised p-4 text-[14px] leading-relaxed text-paper transition-[border-color] duration-200 placeholder:text-paper-dim/60 focus:border-signal focus:outline-none"
           />
           <div className="meta mt-2 text-right" aria-live="polite">{jobDescription.length.toLocaleString()} characters</div>
         </div>
@@ -228,7 +228,7 @@ export default function ResumeToolkitClient() {
       <div className="my-7 flex flex-col justify-center gap-3 sm:flex-row">
         <button className="btn !px-8 !py-3.5 text-[15px]" onClick={handleAnalyze} disabled={matchLoading}>
           {matchLoading ? (
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-accent" aria-hidden="true" />
           ) : (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]" aria-hidden="true">
               <circle cx="11" cy="11" r="7" />
@@ -345,7 +345,7 @@ export default function ResumeToolkitClient() {
               id="letter-output"
               value={coverLetter}
               onChange={(e) => setCoverLetter(e.target.value)}
-              className="min-h-[320px] w-full resize-y rounded-xl border border-border bg-ink-raised p-4 text-[14px] leading-[1.75] text-paper transition-[border-color,box-shadow] duration-200 focus:border-signal focus:shadow-[0_0_0_3px_rgba(78,140,130,0.18)] focus:outline-none"
+              className="min-h-[320px] w-full resize-y rounded-xl border border-border bg-ink-raised p-4 text-[14px] leading-[1.75] text-paper transition-[border-color] duration-200 focus:border-signal focus:outline-none"
             />
           </div>
         </section>
@@ -406,7 +406,7 @@ export default function ResumeToolkitClient() {
 
             <button className="btn mt-5 !px-7 !py-3" onClick={handleSalary} disabled={salaryLoading}>
               {salaryLoading ? (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-accent" aria-hidden="true" />
               ) : (
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]" aria-hidden="true">
                   <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
@@ -427,7 +427,7 @@ export default function ResumeToolkitClient() {
             {salaryResult && (
               <div className="mt-6 flex flex-col gap-6 animate-fade-up">
                 {/* Salary range bars */}
-                <div className="flex flex-col gap-5 rounded-2xl border border-glass-border bg-white/[0.025] p-5">
+                <div className="flex flex-col gap-5 rounded-2xl border border-glass-border bg-ink-soft p-5">
                   {salaryResult.rangePKR && <SalaryBar currency="PKR" range={salaryResult.rangePKR} />}
                   {salaryResult.rangeUSD && <SalaryBar currency="USD" range={salaryResult.rangeUSD} />}
                 </div>
@@ -446,7 +446,7 @@ export default function ResumeToolkitClient() {
                     <div className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.1em] text-success">Negotiation talking points</div>
                     <div className="grid grid-cols-1 gap-2.5">
                       {salaryResult.tips.map((tip, i) => (
-                        <div key={i} className="flex items-start gap-3.5 rounded-xl border border-glass-border bg-white/[0.025] px-4 py-3.5">
+                        <div key={i} className="flex items-start gap-3.5 rounded-xl border border-glass-border bg-ink-soft px-4 py-3.5">
                           <span className="avatar mt-0.5 h-7 w-7 flex-shrink-0 rounded-lg text-[12px]">{i + 1}</span>
                           <span className="text-[13.5px] leading-relaxed text-paper">{tip}</span>
                         </div>

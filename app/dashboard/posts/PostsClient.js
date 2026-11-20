@@ -364,7 +364,7 @@ export default function PostsClient() {
                     </div>
                     <button type="button" className="btn w-full" onClick={handleGenerateWithAi} disabled={aiLoading}>
                       {aiLoading && (
-                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-accent" aria-hidden="true" />
                       )}
                       {aiLoading ? "Writing…" : "Generate"}
                     </button>
@@ -427,7 +427,7 @@ export default function PostsClient() {
                 Photos (optional — 1 photo, or 2-{MAX_IMAGES} for a carousel post)
               </label>
               {images.length < MAX_IMAGES && (
-                <label className="group flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border-strong bg-white/[0.02] px-4 py-7 text-center transition-colors duration-200 hover:border-signal hover:bg-signal/5">
+                <label className="group flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border-strong bg-ink-soft px-4 py-7 text-center transition-colors duration-200 hover:border-signal hover:bg-signal/5">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-paper-dim transition-colors duration-200 group-hover:text-signal-bright" aria-hidden="true">
                     <rect x="3" y="3" width="18" height="18" rx="3" />
                     <circle cx="9" cy="9" r="2" />
@@ -454,11 +454,11 @@ export default function PostsClient() {
                       <img
                         src={img.previewUrl}
                         alt="Selected attachment preview"
-                        className={"block h-[84px] w-[84px] rounded-xl object-cover shadow-[0_4px_10px_rgba(0,0,0,0.35)] " + (img.uploading ? "opacity-50" : "")}
+                        className={"block h-[84px] w-[84px] rounded-xl object-cover " + (img.uploading ? "opacity-50" : "")}
                       />
                       {img.uploading && (
                         <span className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40">
-                          <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-label="Uploading" />
+                          <span className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-accent" aria-label="Uploading" />
                         </span>
                       )}
                       {img.error && (
@@ -468,7 +468,7 @@ export default function PostsClient() {
                         type="button"
                         onClick={() => removeImage(img.id)}
                         aria-label="Remove image"
-                        className="absolute -right-1.5 -top-1.5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border-none bg-danger text-[12px] leading-none text-white shadow-[0_2px_6px_rgba(0,0,0,0.4)] transition-transform duration-150 hover:scale-110"
+                        className="absolute -right-1.5 -top-1.5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border-none bg-ink-raised text-[12px] leading-none text-paper transition-transform duration-150 hover:scale-110"
                       >
                         ×
                       </button>
@@ -484,7 +484,7 @@ export default function PostsClient() {
                 type="button"
                 onClick={toggleBestTime}
                 aria-expanded={showBestTime}
-                className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-border-strong bg-white/[0.02] px-3.5 py-2.5 text-left transition-colors duration-200 hover:border-signal/50"
+                className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-border-strong bg-ink-soft px-3.5 py-2.5 text-left transition-colors duration-200 hover:border-signal/50"
               >
                 <span className="text-[13px] font-bold text-paper">💡 Best time to post</span>
                 <svg
@@ -499,7 +499,7 @@ export default function PostsClient() {
                 <div className="animate-fade-up mt-2.5 rounded-xl border border-border bg-ink-raised p-3.5">
                   {bestTimeLoading && (
                     <div className="flex items-center gap-2 text-[12.5px] text-paper-dim">
-                      <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/20 border-t-signal-bright" aria-hidden="true" />
+                      <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-border border-t-signal-bright" aria-hidden="true" />
                       Analyzing your posting history…
                     </div>
                   )}
@@ -572,7 +572,7 @@ export default function PostsClient() {
                       className={
                         "cursor-pointer border-none px-4 text-[13px] font-bold transition-colors duration-200 " +
                         (ampm === v
-                          ? "bg-gradient-to-br from-signal to-accent text-white"
+                          ? "bg-accent text-[#0B1114]"
                           : "bg-ink-raised text-paper-dim hover:text-paper")
                       }
                     >
@@ -609,8 +609,8 @@ export default function PostsClient() {
                     className={
                       "flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-2 py-3.5 transition-all duration-200 " +
                       (repeat === opt.value
-                        ? "border-transparent bg-gradient-to-br from-signal/25 to-accent/25 shadow-[inset_0_0_0_1px_rgba(111,179,168,0.5),0_4px_14px_rgba(78,140,130,0.2)]"
-                        : "border-border-strong bg-white/[0.02] hover:border-signal/50")
+                        ? "border-accent bg-ink-raised"
+                        : "border-border-strong bg-ink-soft hover:border-signal/50")
                     }
                   >
                     <span className={"h-5 w-5 " + (repeat === opt.value ? "text-signal-bright" : "text-paper-dim")}>
@@ -630,7 +630,7 @@ export default function PostsClient() {
             )}
             <button type="submit" className="btn w-full !py-3.5 text-[15px]" disabled={loading || anyUploading}>
               {loading && (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-accent" aria-hidden="true" />
               )}
               {loading ? "Scheduling…" : "Schedule Post"}
             </button>
@@ -640,10 +640,10 @@ export default function PostsClient() {
         {/* -------------------------------------- live LinkedIn preview */}
         <div className="lg:sticky lg:top-8">
           <div className="card-title">Live Preview</div>
-          <div className="rounded-2xl bg-[#f3f2ef] p-4 text-black shadow-[var(--shadow-pop)]">
-            <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.12)]">
+          <div className="rounded-2xl bg-ink-raised p-4 text-paper">
+            <div className="rounded-xl bg-ink-soft p-4">
               <div className="mb-2.5 flex gap-2.5">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#0a66c2] text-[19px] font-bold text-white">
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-accent text-[19px] font-bold text-[#0B1114]">
                   {userName.charAt(0).toUpperCase()}
                 </div>
                 <div>
@@ -753,7 +753,7 @@ export default function PostsClient() {
             <div className="mt-3">
               {/* Latest logged numbers */}
               {p.performances?.length > 0 && (
-                <div className="mb-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg bg-white/[0.03] px-3 py-2">
+                <div className="mb-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg bg-ink-soft px-3 py-2">
                   {PERF_FIELDS.map((f) => (
                     <span key={f.key} className="text-[12px] text-paper-dim">
                       {f.label}: <span className="font-bold text-paper">{p.performances[0][f.key]}</span>

@@ -39,7 +39,7 @@ export async function GET(request) {
           <strong>${app.company}</strong> is coming up on
           <strong>${new Date(app.interviewAt).toLocaleString()}</strong>.</p>
           <p>Good luck!</p>
-          <p style="color:#888;font-size:12px;">— Career Console</p>
+          <p style="color:#94A3B8;font-size:12px;">— Career Console</p>
         `,
       });
       await prisma.application.update({

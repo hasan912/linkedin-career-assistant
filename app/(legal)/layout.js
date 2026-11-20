@@ -2,7 +2,7 @@ import Link from "next/link";
 import "../globals.css";
 
 export const metadata = {
-  title: "Legal · Career Console",
+  title: "Legal Â· Career Console",
   description: "Terms of Service and Privacy Policy for Career Console.",
 };
 
@@ -11,7 +11,7 @@ export default function LegalLayout({ children }) {
     <div
       style={{
         minHeight: "100vh",
-        background: "#14181C",
+        background: "var(--bg-canvas)",
         color: "var(--paper)",
         fontFamily: "var(--font-body)",
         display: "flex",
@@ -54,8 +54,8 @@ export default function LegalLayout({ children }) {
                 width: 34,
                 height: 34,
                 borderRadius: 10,
-                background: "linear-gradient(135deg, var(--signal), var(--accent))",
-                color: "#fff",
+                background: "var(--accent-amber)",
+                color: "var(--text-on-accent)",
                 fontSize: 13,
                 fontWeight: 800,
               }}
@@ -90,7 +90,7 @@ export default function LegalLayout({ children }) {
             color: "var(--paper-dim)",
           }}
         >
-          <span>© 2026 Career Console</span>
+          <span>Â© 2026 Career Console</span>
           <nav style={{ display: "flex", gap: 20 }}>
             <Link href="/" style={{ color: "var(--paper-dim)", textDecoration: "none" }}>
               Home
